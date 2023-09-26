@@ -1,60 +1,73 @@
 #include <iostream>
-#include <cstring>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
+#include <boost/asio.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/bind/bind.hpp>
+
+using namespace std;
+using namespace boost::asio;
+using ip::tcp;
+namespace pt = boost::property_tree;
+
+void HandleClient(tcp::socket socket) {
+try{
+    
+
+        cout << "Client connected: " << socket.remote_endpoint() << endl;
+
+        // Receive data from the client
+        char data[1024];
+        size_t len = socket.read_some(buffer(data));
+        string received_data(data, len);
+
+        // Parse the received JSON data
+        pt::ptree received_tree;
+        istringstream received_stream(received_data);
+        pt::read_json(received_stream, received_tree);
+
+        // Extract and process individual system information fields
+        string hostname = received_tree.get<string>("hostname");
+        string cpuUsage = received_tree.get<string>("cpu_usage");
+        string ramUsage = received_tree.get<string>("ram_usage");
+        string modelName = received_tree.get<string>("model_name");
+        
+        cout << "Received CPU Usage: " << hostname<< endl;
+        cout << "Received CPU Usage: " << cpuUsage << endl;
+        cout << "Received RAM Usage: " << ramUsage << endl;
+        cout << "Received Model Name: " << modelName << endl;
+        cout << "Client disconnected: " << socket.remote_endpoint() << endl;
+        socket.close();
+
+}
+catch (const exception& e) {
+        cerr << "Exception: " << e.what() << endl;
+    }
+
+}
+
 
 int main() {
-    // Create a socket
-    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_socket == -1) {
-        std::cerr << "Error creating socket" << std::endl;
-        return 1;
+    try {
+        io_service service;
+        tcp::acceptor acceptor(service, tcp::endpoint(tcp::v4(), 12345));
+        tcp::socket socket(service);
+
+
+        cout << "Server started and waiting for connections..." << endl;
+        while (true) {
+            tcp::socket socket(service);
+            acceptor.accept(socket);
+
+            // Start a new thread to handle the client
+            thread(HandleClient, std::move(socket)).detach();
+        }
+
+       
+        
+    } catch (const exception& e) {
+        cerr << "Exception: " << e.what() << endl;
     }
-
-    // Bind the socket to an IP address and port
-    sockaddr_in server_address;
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(12345); // Use the desired port number
-    server_address.sin_addr.s_addr = INADDR_ANY;
-
-    if (bind(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) == -1) {
-        std::cerr << "Error binding socket" << std::endl;
-        return 1;
-    }
-
-    // Listen for incoming connections
-    if (listen(server_socket, 5) == -1) {
-        std::cerr << "Error listening for connections" << std::endl;
-        return 1;
-    }
-
-    std::cout << "Server is listening..." << std::endl;
-
-    // Accept a connection from a client
-    sockaddr_in client_address;
-    socklen_t client_len = sizeof(client_address);
-    int client_socket = accept(server_socket, (struct sockaddr*)&client_address, &client_len);
-
-    if (client_socket == -1) {
-        std::cerr << "Error accepting client connection" << std::endl;
-        return 1;
-    }
-
-    std::cout << "Client connected" << std::endl;
-
-    // Send a "Hello" message to the client
-    const char* message = "Hello, client!";
-    send(client_socket, message, strlen(message), 0);
-
-    // Receive acknowledgment from the client
-    char acknowledgment[1024];
-    recv(client_socket, acknowledgment, sizeof(acknowledgment), 0);
-    std::cout << "Received acknowledgment from client: " << acknowledgment << std::endl;
-
-    // Close the client and server sockets
-    close(client_socket);
-    close(server_socket);
 
     return 0;
 }
+

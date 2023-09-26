@@ -1,42 +1,62 @@
 #include <iostream>
-#include <cstring>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
+#include <boost/asio.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+#include <string>
+#include <cstdlib>
+#include <cstdio>
+
+using namespace std;
+using namespace boost::asio;
+using ip::tcp;
+namespace pt = boost::property_tree;
+// Function to execute a shell command and capture its output
+string exec(const char* cmd) {
+    char buffer[128];
+    string result = "";
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) {
+        return "Error";
+    }
+    while (!feof(pipe)) {
+        if (fgets(buffer, sizeof(buffer), pipe) != NULL) {
+            result += buffer;
+        }
+    }
+    pclose(pipe);
+    return result;
+}
+
+
 
 int main() {
-    // Create a socket
-    int client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (client_socket == -1) {
-        std::cerr << "Error creating socket" << std::endl;
-        return 1;
+  
+    try {
+        io_service service;
+        tcp::socket socket(service);
+
+        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"), 12345);
+        socket.connect(endpoint);
+
+        pt::ptree systemInfoTree;
+        systemInfoTree.put("hostname", exec("hostname"));
+        systemInfoTree.put("cpu_usage", exec("top -n 1 | grep 'Cpu(s)'"));
+        systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
+        systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
+
+        ostringstream systemInfoStream;
+        pt::write_json(systemInfoStream, systemInfoTree);
+        string systemInfo = systemInfoStream.str();
+
+        // Send the JSON string to the server
+        socket.write_some(buffer(systemInfo));
+
+        socket.close();
+    } catch (const std::exception& e) {
+        cerr << "Exception: " << e.what() << endl;
     }
-
-    // Define the server address and port
-    sockaddr_in server_address;
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(12345); // Use the same port number as the server
-    server_address.sin_addr.s_addr = inet_addr("127.0.0.1"); // Use the server's IP address
-
-    // Connect to the server
-    if (connect(client_socket, (struct sockaddr*)&server_address, sizeof(server_address)) == -1) {
-        std::cerr << "Error connecting to server" << std::endl;
-        return 1;
-    }
-
-    std::cout << "Connected to server" << std::endl;
-
-    // Receive the "Hello" message from the server
-    char server_message[1024];
-    recv(client_socket, server_message, sizeof(server_message), 0);
-    std::cout << "Received message from server: " << server_message << std::endl;
-
-    // Send an acknowledgment back to the server
-    const char* acknowledgment = "Acknowledged";
-    send(client_socket, acknowledgment, strlen(acknowledgment), 0);
-
-    // Close the client socket
-    close(client_socket);
 
     return 0;
 }
+
