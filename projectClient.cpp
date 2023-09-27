@@ -2,7 +2,6 @@
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-
 #include <string>
 #include <cstdlib>
 #include <cstdio>
@@ -15,6 +14,7 @@ namespace pt = boost::property_tree;
 string exec(const char* cmd) {
     char buffer[128];
     string result = "";
+    
     FILE* pipe = popen(cmd, "r");
     if (!pipe) {
         return "Error";
@@ -33,13 +33,16 @@ string exec(const char* cmd) {
 int main() {
   
     try {
-        io_service service;
+       io_service service;
         tcp::socket socket(service);
 
         tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"), 12345);
+        
+        while(1){
+        
         socket.connect(endpoint);
-
-        pt::ptree systemInfoTree;
+        cout<<"Sending info"<<endl;
+         pt::ptree systemInfoTree;
         systemInfoTree.put("hostname", exec("hostname"));
         systemInfoTree.put("cpu_usage", exec("top -n 1 | grep 'Cpu(s)'"));
         systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
@@ -51,8 +54,15 @@ int main() {
 
         // Send the JSON string to the server
         socket.write_some(buffer(systemInfo));
-
+        cout<<"info sent"<<endl;
+        sleep(5);
         socket.close();
+        }
+        
+        
+        
+
+        
     } catch (const std::exception& e) {
         cerr << "Exception: " << e.what() << endl;
     }

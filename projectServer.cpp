@@ -35,8 +35,10 @@ try{
         cout << "Received CPU Usage: " << cpuUsage << endl;
         cout << "Received RAM Usage: " << ramUsage << endl;
         cout << "Received Model Name: " << modelName << endl;
-        cout << "Client disconnected: " << socket.remote_endpoint() << endl;
-        socket.close();
+         cout << "Client disconnected: " << socket.remote_endpoint() << endl;
+       socket.close();
+        
+      
 
 }
 catch (const exception& e) {
@@ -54,19 +56,20 @@ int main() {
 
 
         cout << "Server started and waiting for connections..." << endl;
-        while (true) {
+        while (1) {
             tcp::socket socket(service);
             acceptor.accept(socket);
 
             // Start a new thread to handle the client
             thread(HandleClient, std::move(socket)).detach();
         }
-
+       
        
         
     } catch (const exception& e) {
         cerr << "Exception: " << e.what() << endl;
     }
+  
 
     return 0;
 }
