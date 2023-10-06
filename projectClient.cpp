@@ -10,11 +10,12 @@ using namespace std;
 using namespace boost::asio;
 using ip::tcp;
 namespace pt = boost::property_tree;
+
 // Function to execute a shell command and capture its output
 string exec(const char* cmd) {
     char buffer[128];
     string result = "";
-    
+
     FILE* pipe = popen(cmd, "r");
     if (!pipe) {
         return "Error";
@@ -29,44 +30,63 @@ string exec(const char* cmd) {
 }
 
 
-
 int main() {
-  
     try {
-       io_service service;
+        io_service service;
         tcp::socket socket(service);
 
-        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"), 12345);
-        
-        while(1){
-        
+        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"), 3000);
+
+        // Connect to the server
         socket.connect(endpoint);
-        cout<<"Sending info"<<endl;
-         pt::ptree systemInfoTree;
-        systemInfoTree.put("hostname", exec("hostname"));
-        systemInfoTree.put("cpu_usage", exec("top -n 1 | grep 'Cpu(s)'"));
-        systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
-        systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
+        cout << "Connected to the server" << endl;
 
-        ostringstream systemInfoStream;
-        pt::write_json(systemInfoStream, systemInfoTree);
-        string systemInfo = systemInfoStream.str();
+        while (1) {
+            cout << "Sending info" << endl;
+            pt::ptree systemInfoTree;
+            systemInfoTree.put("hostname", exec("hostname"));
+            systemInfoTree.put("cpu_usage", exec("top -n 1 | grep 'Cpu(s)'"));
+            systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
+            systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
 
-        // Send the JSON string to the server
-        socket.write_some(buffer(systemInfo));
-        cout<<"info sent"<<endl;
-        sleep(5);
-        socket.close();
+            ostringstream systemInfoStream;
+            pt::write_json(systemInfoStream, systemInfoTree);
+            string systemInfo = systemInfoStream.str();
+
+            // Send the JSON string to the server
+            boost::system::error_code write_error;
+           size_t bytes_written = socket.write_some(buffer(systemInfo));//boost::asio::write_some(socket, buffer(systemInfo), write_error);
+                   
+            if (write_error) {
+                cerr << "Error sending data to the server: " << write_error.message() << endl;
+                break;  // Exit the loop on write error
+            } else {
+                cout << "Sent " << bytes_written << " bytes of data to the server" << endl;
+            }
+            char response_data[1024];
+            boost::system::error_code read_error;
+            size_t response_length = socket.read_some(buffer(response_data), read_error);
+
+            if (read_error == boost::asio::error::eof) {
+                cout << "Server disconnected" << endl;
+                break;  // Exit the loop if the server closed the connection
+            } else if (read_error) {
+                cerr << "Error reading response from the server: " << read_error.message() << endl;
+                break;  // Exit the loop on read error
+            } else {
+                cout << "Received response from the server: " << string(response_data, response_length) << endl;
+            }
+
+            // Sleep before the next iteration
+            sleep(5);
         }
-        
-        
-        
 
-        
+        // Close the socket when done
+        socket.close();
+        cout << "Disconnected from the server" << endl;
     } catch (const std::exception& e) {
         cerr << "Exception: " << e.what() << endl;
     }
 
     return 0;
 }
-
