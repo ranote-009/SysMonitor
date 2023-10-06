@@ -1,0 +1,128 @@
+#include <iostream>
+#include <boost/asio.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <thread>
+#include <memory>
+
+using namespace std;
+using namespace boost::asio;
+using ip::tcp;
+namespace pt = boost::property_tree;
+
+class ConnectionAcceptor {
+public:
+    virtual ~ConnectionAcceptor() = default;
+    virtual tcp::socket Accept() = 0;
+};
+
+class TCPConnectionAcceptor : public ConnectionAcceptor {
+public:
+    TCPConnectionAcceptor(io_service& service, int port) : acceptor_(service, tcp::endpoint(tcp::v4(), port)) {}
+
+    tcp::socket Accept() override {
+        tcp::socket socket(acceptor_.get_executor());
+        acceptor_.accept(socket);
+        return socket;
+    }
+
+private:
+    tcp::acceptor acceptor_;
+};
+
+class AbstractClientHandler {
+public:
+    virtual ~AbstractClientHandler() = default;
+    virtual void Handle() = 0;
+};
+
+class JSONClientHandler : public AbstractClientHandler {
+public:
+    JSONClientHandler(tcp::socket socket) : socket_(std::move(socket)) {}
+
+    void Handle() override {
+        try {
+            cout << "Client connected: " << socket_.remote_endpoint() << endl;
+
+            // Receive data from the client
+            char data[1024];
+            size_t len = socket_.read_some(buffer(data));
+            string received_data(data, len);
+
+            // Parse the received JSON data
+            pt::ptree received_tree;
+            istringstream received_stream(received_data);
+            pt::read_json(received_stream, received_tree);
+
+            // Extract and process individual system information fields
+            string hostname = received_tree.get<string>("hostname");
+            string cpuUsage = received_tree.get<string>("cpu_usage");
+            string ramUsage = received_tree.get<string>("ram_usage");
+            string modelName = received_tree.get<string>("model_name");
+
+            cout << "Received CPU Usage: " << cpuUsage << endl;
+            cout << "Received RAM Usage: " << ramUsage << endl;
+            cout << "Received Model Name: " << modelName << endl;
+            cout << "Client disconnected: " << socket_.remote_endpoint() << endl;
+            socket_.close();
+        } catch (const exception& e) {
+            cerr << "Exception: " << e.what() << endl;
+        }
+    }
+
+private:
+    tcp::socket socket_;
+};
+
+class ClientProcessor {
+public:
+    virtual ~ClientProcessor() = default;
+    virtual void Process() = 0;
+};
+
+class JSONClientProcessor : public ClientProcessor {
+public:
+    JSONClientProcessor(ConnectionAcceptor& acceptor) : acceptor_(acceptor) {}
+
+    void Process() override {
+        try {
+            io_service service;
+            tcp::socket socket = acceptor_.Accept();
+            JSONClientHandler handler(std::move(socket));
+            handler.Handle();
+        } catch (const exception& e) {
+            cerr << "Exception: " << e.what() << endl;
+        }
+    }
+
+private:
+    ConnectionAcceptor& acceptor_;
+};
+
+class Server {
+public:
+    Server(io_service& service, int port) : acceptor_(service, port) {}
+
+    void Start() {
+        cout << "Server started and waiting for connections..." << endl;
+        while (true) {
+            unique_ptr<ClientProcessor> processor = make_unique<JSONClientProcessor>(acceptor_);
+            thread(&ClientProcessor::Process, std::move(processor)).detach();
+        }
+    }
+
+private:
+    TCPConnectionAcceptor acceptor_;
+};
+
+int main() {
+    try {
+        io_service service;
+        Server server(service, 12345);
+        server.Start();
+    } catch (const exception& e) {
+        cerr << "Exception: " << e.what() << endl;
+    }
+
+    return 0;
+}
