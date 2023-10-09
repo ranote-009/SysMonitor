@@ -45,9 +45,14 @@ int main() {
             cout << "Sending info" << endl;
             pt::ptree systemInfoTree;
             systemInfoTree.put("hostname", exec("hostname"));
+            systemInfoTree.put("current_user", exec("whoami"));
+            systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
+            systemInfoTree.put("kernel_version", exec("hostnamectl |grep 'Kernel'"));
+            systemInfoTree.put("os_version", exec("hostnamectl |grep 'Operating System'"));
             systemInfoTree.put("cpu_usage", exec("top -n 1 | grep 'Cpu(s)'"));
             systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
-            systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
+            systemInfoTree.put("system_idle_window", exec("top -bn1 | grep Cpu | awk '{printf \"System Idle Window: %.2f%%\", $8}'"));
+            
 
             ostringstream systemInfoStream;
             pt::write_json(systemInfoStream, systemInfoTree);
