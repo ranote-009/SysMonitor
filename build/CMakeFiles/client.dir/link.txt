@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/client.dir/projectClient.cpp.o -o client  -lBoost::Boost 
