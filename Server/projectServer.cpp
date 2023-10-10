@@ -33,7 +33,7 @@ void CreateTables(Connection* con) {
                 cpuUsage VARCHAR(255) NOT NULL,
                 ramUsage VARCHAR(255) NOT NULL,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (client_id) REFERENCES clients(client_id)
+                FOREIGN KEY (client_id) REFERENCES Clients(client_id)
             )
         )";
 

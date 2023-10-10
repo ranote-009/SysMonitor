@@ -57,10 +57,12 @@ int main() {
         while (1) {
             cout << "Sending info" << endl;
             pt::ptree systemInfoTree;
+            systemInfoTree.put("macaddress", exec("ifconfig | grep -o -E '([0-9a-fA-F]{2}:){5}([0-9a-fA-F]{2})' | paste -d ' ' - -"));
             systemInfoTree.put("hostname", exec("hostname"));
-            systemInfoTree.put("cpu_usage", exec("top -n 1 | grep 'Cpu(s)'"));
+             systemInfoTree.put("cpu_usage", exec("top -b -n 1 | grep '%Cpu(s)' | awk '{print $2+$4+$6+$10+$12+$14}'"));
             systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
-            systemInfoTree.put("system_idle_window", exec("top -bn1 | grep Cpu | awk '{printf \"System Idle Window: %.2f%%\", $8}'"));
+           // systemInfoTree.put("system_idle_window", exec("top -bn1 | grep Cpu | awk '{printf \"System Idle Window: %.2f%%\", $8}'"));
+             systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
             
 
             ostringstream systemInfoStream;
