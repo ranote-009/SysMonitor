@@ -18,17 +18,18 @@ void CreateTables(Connection* con) {
 
         // Create the Clients Table if it doesn't exist
         const char* createClientsTableSQL = R"(
-            CREATE TABLE IF NOT EXISTS clients (
+            CREATE TABLE IF NOT EXISTS Clients (
                 client_id INT AUTO_INCREMENT PRIMARY KEY,
-                hostname VARCHAR(255) NOT NULL
+                macaddress VARCHAR(255) NOT NULL
             )
         )";
 
         // Create the System Info Table if it doesn't exist
         const char* createSystemInfoTableSQL = R"(
-            CREATE TABLE IF NOT EXISTS system_info (
+            CREATE TABLE IF NOT EXISTS systems_info (
                 system_info_id INT AUTO_INCREMENT PRIMARY KEY,
                 client_id INT,
+                hostname VARCHAR(255) NOT NULL,
                 cpuUsage VARCHAR(255) NOT NULL,
                 ramUsage VARCHAR(255) NOT NULL,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -46,13 +47,13 @@ void CreateTables(Connection* con) {
     }
 }
 
-void StoreClientInfoInDatabase(Connection* con, const std::string& hostname) {
+void StoreClientInfoInDatabase(Connection* con, const std::string& macaddress) {
     try {
         // Check if the client's hostname already exists in the clients table
         PreparedStatement* checkClientStmt;
-        const char* checkClientSQL = "SELECT client_id FROM clients WHERE hostname = ?";
+        const char* checkClientSQL = "SELECT client_id FROM Clients WHERE macaddress = ?";
         checkClientStmt = con->prepareStatement(checkClientSQL);
-        checkClientStmt->setString(1, hostname);
+        checkClientStmt->setString(1, macaddress);
         ResultSet* resultSet = checkClientStmt->executeQuery();
 
         int clientId = -1; // Initialize to a value that indicates the hostname is not in the table
@@ -63,9 +64,9 @@ void StoreClientInfoInDatabase(Connection* con, const std::string& hostname) {
         // If the client's hostname doesn't exist, insert it into the clients table
         if (clientId == -1) {
             PreparedStatement* insertClientStmt;
-            const char* insertClientSQL = "INSERT INTO clients (hostname) VALUES (?)";
+            const char* insertClientSQL = "INSERT INTO Clients (macaddress) VALUES (?)";
             insertClientStmt = con->prepareStatement(insertClientSQL);
-            insertClientStmt->setString(1, hostname);
+            insertClientStmt->setString(1, macaddress);
             insertClientStmt->execute();
 
             // Retrieve the generated client_id
@@ -80,7 +81,7 @@ void StoreClientInfoInDatabase(Connection* con, const std::string& hostname) {
     }
 }
 
-void StoreSystemInfoInDatabase(const std::string& hostname, const std::string& cpuUsage, const std::string& ramUsage) {
+void StoreSystemInfoInDatabase(const std::string& macaddress,const std::string& hostname, const std::string& cpuUsage, const std::string& ramUsage) {
     try {
         // Initialize MySQL Connector/C++
         sql::mysql::MySQL_Driver* driver;
@@ -95,13 +96,13 @@ void StoreSystemInfoInDatabase(const std::string& hostname, const std::string& c
         CreateTables(con);
 
         // Store client info (hostname) in the clients table if it doesn't exist
-        StoreClientInfoInDatabase(con, hostname);
+        StoreClientInfoInDatabase(con, macaddress);
 
         // Retrieve the client_id for the given hostname
         PreparedStatement* getClientIdStmt;
-        const char* getClientIdSQL = "SELECT client_id FROM clients WHERE hostname = ?";
+        const char* getClientIdSQL = "SELECT client_id FROM Clients WHERE macaddress = ?";
         getClientIdStmt = con->prepareStatement(getClientIdSQL);
-        getClientIdStmt->setString(1, hostname);
+        getClientIdStmt->setString(1, macaddress);
         ResultSet* resultSet = getClientIdStmt->executeQuery();
 
         int clientId = -1; // Initialize to a value that indicates the hostname is not in the table
@@ -111,11 +112,12 @@ void StoreSystemInfoInDatabase(const std::string& hostname, const std::string& c
 
         // Insert system information with the corresponding client_id
         PreparedStatement* insertSystemInfoStmt;
-        const char* insertSystemInfoSQL = "INSERT INTO system_info (client_id, cpuUsage, ramUsage) VALUES (?, ?, ?)";
+        const char* insertSystemInfoSQL = "INSERT INTO systems_info (client_id,hostname, cpuUsage, ramUsage) VALUES (?,?, ?, ?)";
         insertSystemInfoStmt = con->prepareStatement(insertSystemInfoSQL);
         insertSystemInfoStmt->setInt(1, clientId);
-        insertSystemInfoStmt->setString(2, cpuUsage);
-        insertSystemInfoStmt->setString(3, ramUsage);
+           insertSystemInfoStmt->setString(2,hostname);
+        insertSystemInfoStmt->setString(3, cpuUsage);
+        insertSystemInfoStmt->setString(4, ramUsage);
         insertSystemInfoStmt->execute();
 
         // Clean up and close the database connection
@@ -158,11 +160,13 @@ void HandleClient(tcp::socket&& socket) {
             pt::read_json(received_stream, received_tree);
 
             // Extract and process individual system information fields
+            string macaddress = received_tree.get<string>("macaddress");
             string hostname = received_tree.get<string>("hostname");
             string cpuUsage = received_tree.get<string>("cpu_usage");
             string ramUsage = received_tree.get<string>("ram_usage");
             string modelName = received_tree.get<string>("model_name");
 
+            cout << "\n Received macaddress: " << macaddress << endl;
             cout << "Received hostname: " << hostname << endl;
             cout << "Received CPU Usage: " << cpuUsage << endl;
             cout << "Received RAM Usage: " << ramUsage << endl;
@@ -170,7 +174,7 @@ void HandleClient(tcp::socket&& socket) {
 
 
 
-             StoreSystemInfoInDatabase(hostname, cpuUsage, ramUsage);
+             StoreSystemInfoInDatabase(macaddress,hostname, cpuUsage, ramUsage);
 
             // Send a success response to the client
             string successResponse = "Data transfer was successful!";

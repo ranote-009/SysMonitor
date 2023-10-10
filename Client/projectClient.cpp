@@ -10,7 +10,7 @@ using namespace std;
 using namespace boost::asio;
 using ip::tcp;
 namespace pt = boost::property_tree;
-
+int i=0;
 // Function to execute a shell command and capture its output
 string exec(const char* cmd) {
     char buffer[128];
@@ -26,6 +26,19 @@ string exec(const char* cmd) {
         }
     }
     pclose(pipe);
+    size_t start = result.find_first_not_of(" \t\n\r\f\v");
+
+    // Find the position of the last non-space character.
+    size_t end = result.find_last_not_of(" \t\n\r\f\v");
+
+    // Check for cases where the string is all spaces.
+    if (start == std::string::npos || end == std::string::npos) {
+        // The string is either empty or contains only spaces.
+        result.clear();
+    } else {
+        // Extract the substring without leading and trailing spaces.
+        result= result.substr(start, end - start + 1);
+    }
     return result;
 }
 
@@ -45,7 +58,8 @@ int main() {
             cout << "Sending info" << endl;
             pt::ptree systemInfoTree;
             systemInfoTree.put("hostname", exec("hostname"));
-            systemInfoTree.put("cpu_usage", exec("top -n 1 | grep 'Cpu(s)'"));
+             systemInfoTree.put("macaddress", exec("ifconfig | grep -o -E '([0-9a-fA-F]{2}:){5}([0-9a-fA-F]{2})'"));
+            systemInfoTree.put("cpu_usage", exec("top -b -n 1 | grep '%Cpu(s)' | awk '{print $2+$4+$6+$10+$12+$14}'"));
             systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
             systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
 
@@ -86,6 +100,15 @@ int main() {
         cout << "Disconnected from the server" << endl;
     } catch (const std::exception& e) {
         cerr << "Exception: " << e.what() << endl;
+        sleep(5);
+        if(i<2){
+         i++;
+         main();
+        }else{
+             cout<<"Not able to connect"<<endl;
+        
+        }
+       
     }
 
     return 0;
