@@ -48,7 +48,7 @@ int main() {
         io_service service;
         tcp::socket socket(service);
 
-        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"), 3000);
+        tcp::endpoint endpoint(ip::address::from_string("10.11.245.181"), 3000);
 
         // Connect to the server
         socket.connect(endpoint);
