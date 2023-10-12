@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/abhsihek/SysMonitor
+CMAKE_SOURCE_DIR = /home/mohit/Desktop/project/SysMonitor
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/abhsihek/SysMonitor/build
+CMAKE_BINARY_DIR = /home/mohit/Desktop/project/SysMonitor/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/abhsihek/SysMonitor/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/abhsihek/SysMonitor/build/CMakeFiles /home/abhsihek/SysMonitor/build/Client//CMakeFiles/progress.marks
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/abhsihek/SysMonitor/build/CMakeFiles 0
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/mohit/Desktop/project/SysMonitor/build/CMakeFiles /home/mohit/Desktop/project/SysMonitor/build/Client//CMakeFiles/progress.marks
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/mohit/Desktop/project/SysMonitor/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/clean
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/preinstall
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/preinstall
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/abhsihek/SysMonitor/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 Client/CMakeFiles/client.dir/rule:
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/CMakeFiles/client.dir/rule
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Client/CMakeFiles/client.dir/rule
 .PHONY : Client/CMakeFiles/client.dir/rule
 
 # Convenience name for target.
@@ -127,7 +127,7 @@ client: Client/CMakeFiles/client.dir/rule
 
 # fast build rule for target.
 client/fast:
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Client/CMakeFiles/client.dir/build.make Client/CMakeFiles/client.dir/build
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Client/CMakeFiles/client.dir/build.make Client/CMakeFiles/client.dir/build
 .PHONY : client/fast
 
 projectClient.o: projectClient.cpp.o
@@ -135,7 +135,7 @@ projectClient.o: projectClient.cpp.o
 
 # target to build an object file
 projectClient.cpp.o:
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Client/CMakeFiles/client.dir/build.make Client/CMakeFiles/client.dir/projectClient.cpp.o
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Client/CMakeFiles/client.dir/build.make Client/CMakeFiles/client.dir/projectClient.cpp.o
 .PHONY : projectClient.cpp.o
 
 projectClient.i: projectClient.cpp.i
@@ -143,7 +143,7 @@ projectClient.i: projectClient.cpp.i
 
 # target to preprocess a source file
 projectClient.cpp.i:
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Client/CMakeFiles/client.dir/build.make Client/CMakeFiles/client.dir/projectClient.cpp.i
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Client/CMakeFiles/client.dir/build.make Client/CMakeFiles/client.dir/projectClient.cpp.i
 .PHONY : projectClient.cpp.i
 
 projectClient.s: projectClient.cpp.s
@@ -151,7 +151,7 @@ projectClient.s: projectClient.cpp.s
 
 # target to generate assembly for a file
 projectClient.cpp.s:
-	cd /home/abhsihek/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Client/CMakeFiles/client.dir/build.make Client/CMakeFiles/client.dir/projectClient.cpp.s
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Client/CMakeFiles/client.dir/build.make Client/CMakeFiles/client.dir/projectClient.cpp.s
 .PHONY : projectClient.cpp.s
 
 # Help Target
@@ -177,6 +177,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/abhsihek/SysMonitor/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/mohit/Desktop/project/SysMonitor/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
