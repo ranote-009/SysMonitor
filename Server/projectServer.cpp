@@ -4,11 +4,15 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <mysql_driver.h>
 #include <mysql_connection.h>
+#include <fstream>
 #include <cppconn/prepared_statement.h>
 
 using namespace std;
 using namespace sql;
 using namespace boost::asio;
+ sql::PreparedStatement *pstmt;
+ sql::ResultSet *res;
+
 
 using ip::tcp;
 namespace pt = boost::property_tree;
@@ -19,7 +23,7 @@ public:
         try {
             driver = sql::mysql::get_mysql_driver_instance();
             con = driver->connect("tcp://localhost:3306", "root", "");
-            con->setSchema("testdb");
+            con->setSchema("sys_info");
             CreateTables(con);
         } catch (const std::exception& e) {
             std::cerr << "DatabaseManager Exception: " << e.what() << std::endl;
@@ -49,7 +53,7 @@ public:
                     cpuUsage VARCHAR(255) NOT NULL,
                     ramUsage VARCHAR(255) NOT NULL,
                     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (client_id) REFERENCES clients(client_id)
+                    FOREIGN KEY (client_id) REFERENCES Clients(client_id)
                 )
             )";
             stmt->execute(createClientsTableSQL);
@@ -107,6 +111,20 @@ public:
             insertSystemInfoStmt->setString(3, cpuUsage);
             insertSystemInfoStmt->setString(4, ramUsage);
             insertSystemInfoStmt->execute();
+           // Execute a query using a prepared statement
+         pstmt = con->prepareStatement("SELECT * FROM systems_info");
+         res = pstmt->executeQuery();
+
+            // Define the CSV file name
+         const char* csv_file = "exported_data.csv";
+
+            // Write data to a CSV file
+           ofstream file(csv_file);
+           file << "client_id,system_info_id,hostname,cpuUsage,ramUsage,timestamp" << endl;
+           while (res->next()) {
+           file << res->getString("client_id") << "," << res->getString("system_info_id")<< "," << res->getString("hostname") << "," << res->getString("cpuUsage")<< "," << res->getString("ramUsage")<< "," << res->getString("timestamp")<< endl; // Replace column1 and column2 with actual column names
+            }
+           file.close();
             delete getClientIdStmt;
             delete insertSystemInfoStmt;
         } catch (const std::exception& e) {
