@@ -112,16 +112,16 @@ public:
             insertSystemInfoStmt->setString(4, ramUsage);
             insertSystemInfoStmt->execute();
            // Execute a query using a prepared statement
-         pstmt = con->prepareStatement("SELECT * FROM systems_info");
-         res = pstmt->executeQuery();
+            pstmt = con->prepareStatement("SELECT * FROM systems_info");
+            res = pstmt->executeQuery();
 
             // Define the CSV file name
-         const char* csv_file = "exported_data.csv";
+            const char* csv_file = "exported_data.csv";
 
             // Write data to a CSV file
-           ofstream file(csv_file);
-           file << "client_id,system_info_id,hostname,cpuUsage,ramUsage,timestamp" << endl;
-           while (res->next()) {
+            ofstream file(csv_file);
+            file << "client_id,system_info_id,hostname,cpuUsage,ramUsage,timestamp" << endl;
+            while (res->next()) {
            file << res->getString("client_id") << "," << res->getString("system_info_id")<< "," << res->getString("hostname") << "," << res->getString("cpuUsage")<< "," << res->getString("ramUsage")<< "," << res->getString("timestamp")<< endl; // Replace column1 and column2 with actual column names
             }
            file.close();

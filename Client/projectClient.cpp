@@ -124,20 +124,8 @@ private:
     }
 
     void logSuccess() {
-        // ofstream logFile(logFilePath_, ios::app);
-        // if (logFile.is_open()) {
-        //     time_t now = time(0);
-        //     tm* timeInfo = localtime(&now);
-        //     char timestamp[20];
-        //     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
-
-        //     logFile << "Data successfully sent at " << timestamp << endl;
-        //     logFile.close();
-        // } else {
-        //     cerr << "Error opening log file for writing." << endl;
-        // }
         std::ofstream logFile(logFilePath_, std::ios::app);
-if (logFile.is_open()) {
+   if (logFile.is_open()) {
      if (logFile.tellp() == 0) {
         // Add column names if the file is empty
         logFile << "Result,Timestamp" << std::endl;
