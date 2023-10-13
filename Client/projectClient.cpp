@@ -106,6 +106,10 @@ private:
     }
 
     void receiveResponse(tcp::socket& socket) {
+          time_t now = time(0);
+            tm* timeInfo = localtime(&now);
+            char timestamp[20];
+            strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
         char response_data[1024];
         boost::system::error_code read_error;
         size_t response_length = socket.read_some(buffer(response_data), read_error);
@@ -115,28 +119,44 @@ private:
         } else if (read_error) {
             cerr << "Error reading response from the server: " << read_error.message() << endl;
         } else {
-            cout << "Received response from the server: " << string(response_data, response_length) << endl;
+            cout << "Received response from the server: " << string(response_data, response_length)<<"at"<<timestamp << endl;
         }
     }
 
     void logSuccess() {
-        ofstream logFile(logFilePath_, ios::app);
-        if (logFile.is_open()) {
-            time_t now = time(0);
-            tm* timeInfo = localtime(&now);
-            char timestamp[20];
-            strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
+        // ofstream logFile(logFilePath_, ios::app);
+        // if (logFile.is_open()) {
+        //     time_t now = time(0);
+        //     tm* timeInfo = localtime(&now);
+        //     char timestamp[20];
+        //     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
 
-            logFile << "Data successfully sent at " << timestamp << endl;
-            logFile.close();
-        } else {
-            cerr << "Error opening log file for writing." << endl;
-        }
+        //     logFile << "Data successfully sent at " << timestamp << endl;
+        //     logFile.close();
+        // } else {
+        //     cerr << "Error opening log file for writing." << endl;
+        // }
+        std::ofstream logFile(logFilePath_, std::ios::app);
+if (logFile.is_open()) {
+     if (logFile.tellp() == 0) {
+        // Add column names if the file is empty
+        logFile << "Result,Timestamp" << std::endl;
+    }
+    time_t now = time(0);
+    tm* timeInfo = localtime(&now);
+    char timestamp[20];
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
+
+    logFile << "Data successfully sent at, " << timestamp << std::endl; // Separate values with commas
+    logFile.close();
+} else {
+    std::cerr << "Error opening log file for writing." << std::endl;
+}
     }
 };
 
 int main() {
-    SystemInfoClient client("127.0.0.1", 3000, "log.txt");
+    SystemInfoClient client("127.0.0.1", 3000, "log.csv");
     client.run();
 
     return 0;
