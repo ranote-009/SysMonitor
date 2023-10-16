@@ -6,19 +6,19 @@
 #include <mysql_connection.h>
 #include <fstream>
 #include <cppconn/prepared_statement.h>
+#include <libssh/libssh.h>
 
 using namespace std;
 using namespace sql;
 using namespace boost::asio;
- sql::PreparedStatement *pstmt;
- sql::ResultSet *res;
-
+sql::PreparedStatement *pstmt;
+sql::ResultSet *res;
 
 using ip::tcp;
 namespace pt = boost::property_tree;
 
 class DatabaseManager {
-public:
+    public:
     DatabaseManager() {
         try {
             driver = sql::mysql::get_mysql_driver_instance();
@@ -34,9 +34,12 @@ public:
         if (con) {
             delete con;
         }
-    }
+    }   
 
-    void CreateTables(Connection* con) {
+};
+
+
+void CreateTables(Connection* con) {
         try {
             Statement* stmt = con->createStatement();
             const char* createClientsTableSQL = R"(
@@ -130,7 +133,7 @@ public:
         } catch (const std::exception& e) {
             std::cerr << "StoreSystemInfo Exception: " << e.what() << std::endl;
         }
-    }
+    
 
 private:
     sql::mysql::MySQL_Driver* driver;
@@ -148,14 +151,57 @@ public:
             while (1) {
                 tcp::socket socket(service);
                 acceptor.accept(socket);
-                thread(&Server::HandleClient, this, std::move(socket)).detach();
+
+                // Authenticate the client via SSH here
+                if (AuthenticateClientSSH(socket)) {
+                    thread(&Server::HandleClient, this, std::move(socket)).detach();
+                } else {
+                    cerr << "SSH authentication failed for the client." << endl;
+                    // Handle unauthorized client here
+                }
             }
         } catch (const exception& e) {
             cerr << "Server Exception: " << e.what() << endl;
         }
     }
 
-    void HandleClient(tcp::socket&& socket) {
+    // SSH Authentication Function
+    bool AuthenticateClientSSH(tcp::socket &socket) {
+        // Initialize libssh session
+        ssh_session ssh_session = ssh_new();
+
+        if (ssh_session == nullptr) {
+            cerr << "Failed to create SSH session." << endl;
+            return false;
+        }
+
+        // Set SSH options, including host key checking and authentication methods
+        ssh_options_set(ssh_session, SSH_OPTIONS_HOST, "localhost");
+        ssh_options_set(ssh_session, SSH_OPTIONS_USER, "shivanshu"/*your ssh username*/);
+        ssh_options_set(ssh_session, SSH_OPTIONS_LOG_VERBOSITY, SSH_LOG_NOLOG);
+        
+        // Connect to the SSH server
+        if (ssh_connect(ssh_session) != SSH_OK) {
+            cerr << "SSH connection failed." << endl;
+            ssh_free(ssh_session);
+            return false;
+        }
+
+        // Authenticate using SSH key
+        if (ssh_userauth_publickey_auto(ssh_session, nullptr, nullptr) != SSH_AUTH_SUCCESS) {
+            cerr << "SSH key authentication failed." << endl;
+            ssh_disconnect(ssh_session);
+            ssh_free(ssh_session);
+            return false;
+        }
+
+        // SSH authentication successful
+        ssh_disconnect(ssh_session);
+        ssh_free(ssh_session);
+        return true;
+    }
+
+     void HandleClient(tcp::socket&& socket) {
         try {
             cout << "Client connected: " << socket.remote_endpoint() << endl;
 
