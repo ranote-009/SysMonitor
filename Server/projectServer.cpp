@@ -1,5 +1,6 @@
 #include <iostream>
 #include <boost/asio.hpp>
+#include <boost/beast.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <mysql_driver.h>
@@ -9,9 +10,11 @@
 using namespace std;
 using namespace sql;
 using namespace boost::asio;
-
-using ip::tcp;
 namespace pt = boost::property_tree;
+namespace beast = boost::beast;
+namespace http = beast::http;
+namespace websocket = beast::websocket;
+using tcp = ip::tcp;
 
 class DatabaseManager {
 public:
@@ -117,6 +120,7 @@ public:
 private:
     sql::mysql::MySQL_Driver* driver;
     Connection* con;
+
 };
 
 class Server {
@@ -141,38 +145,59 @@ public:
         try {
             cout << "Client connected: " << socket.remote_endpoint() << endl;
 
+            // Wrap the raw socket in a WebSocket stream
+            websocket::stream<tcp::socket> ws(std::move(socket));
+
+            // Perform WebSocket handshake
+            ws.async_accept([](const beast::error_code& ec) {
+                if (ec) {
+                    cerr << "WebSocket handshake failed: " << ec.message() << endl;
+                }
+            });
+
             while (1) {
-                char data[1024];
-                boost::system::error_code error;
-                size_t len = socket.read_some(buffer(data));
-                string received_data(data, len);
-                cout << "Received " << len << " bytes of data from the client" << endl;
+                beast::flat_buffer buffer;
+                ws.async_read(buffer, [&](const beast::error_code& ec, size_t bytes_transferred) {
+                    if (ec) {
+                        cerr << "WebSocket read error: " << ec.message() << endl;
+                        return;
+                    }
 
-                pt::ptree received_tree;
-                istringstream received_stream(received_data);
-                pt::read_json(received_stream, received_tree);
+                    string received_data(beast::buffers_to_string(buffer.data()));
+                    cout << "Received " << bytes_transferred << " bytes of data from the client" << endl;
 
-                string macaddress = received_tree.get<string>("macaddress");
-                string hostname = received_tree.get<string>("hostname");
-                string cpuUsage = received_tree.get<string>("cpu_usage");
-                string ramUsage = received_tree.get<string>("ram_usage");
-                string modelName = received_tree.get<string>("model_name");
+                    // Parse the JSON
+                    pt::ptree received_tree;
+                    istringstream received_stream(received_data);
+                    pt::read_json(received_stream, received_tree);
 
-                cout << "\nReceived macaddress: " << macaddress << endl;
-                cout << "Received hostname: " << hostname << endl;
-                cout << "Received CPU Usage: " << cpuUsage << endl;
-                cout << "Received RAM Usage: " << ramUsage << endl;
-                cout << "Received Model Name: " << modelName << endl;
+                    string macaddress = received_tree.get<string>("macaddress");
+                    string hostname = received_tree.get<string>("hostname");
+                    string cpuUsage = received_tree.get<string>("cpu_usage");
+                    string ramUsage = received_tree.get<string>("ram_usage");
+                    string modelName = received_tree.get<string>("model_name");
 
-                db.StoreSystemInfo(macaddress, hostname, cpuUsage, ramUsage);
+                    cout << "\nReceived macaddress: " << macaddress << endl;
+                    cout << "Received hostname: " << hostname << endl;
+                    cout << "Received CPU Usage: " << cpuUsage << endl;
+                    cout << "Received RAM Usage: " << ramUsage << endl;
+                    cout << "Received Model Name: " << modelName << endl;
 
-                string successResponse = "Data transfer was successful!";
-                socket.write_some(buffer(successResponse));
-                cout << "Sent success response to the client" << endl;
+                    // Store data in the database
+                    db.StoreSystemInfo(macaddress, hostname, cpuUsage, ramUsage);
+
+                    // Send a success response back to the client
+                    string successResponse = "Data transfer was successful!";
+                    ws.async_write(boost::asio::buffer(successResponse),
+                        [](const beast::error_code& ec, size_t bytes_transferred) {
+                            if (ec) {
+                                cerr << "WebSocket write error: " << ec.message() << endl;
+                            } else {
+                                cout << "Sent success response to the client" << endl;
+                            }
+                        });
+                });
             }
-
-            socket.close();
-            cout << "Client disconnected: " << socket.remote_endpoint() << endl;
         } catch (const exception& e) {
             cerr << "HandleClient Exception: " << e.what() << endl;
         }
