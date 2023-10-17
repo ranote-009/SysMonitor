@@ -5,7 +5,6 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <string>
 #include <cstdlib>
-#include <cstdio>
 #include <ctime>
 
 using namespace std;
@@ -30,11 +29,21 @@ public:
             socket.connect(endpoint);
             cout << "Connected to the server" << endl;
 
-            while (true) {
-                sendSystemInfo(socket);
-                receiveResponse(socket);
-                logSuccess(); // Log success with timestamp
-                sleep(5);
+            // Ask the user to enter the login key
+            cout << "Enter the login key: ";
+            string loginKey;
+            cin >> loginKey;
+
+            if (authenticate(loginKey)) {
+                cout << "Authentication successful." << endl;
+                while (true) {
+                    sendSystemInfo(socket);
+                    receiveResponse(socket);
+                    logSuccess(); // Log success with timestamp
+                    sleep(5);
+                }
+            } else {
+                cout << "Authentication failed. Connection terminated." << endl;
             }
 
             // Close the socket when done
@@ -57,6 +66,19 @@ private:
     int serverPort_;
     std::string logFilePath_;
     int reconnectAttempts_ = 0;
+
+    bool authenticate(const std::string& loginKey) {
+        // Get the secret key from the environment variable
+        const char* envSecretKey = std::getenv("CLIENT_SECRET_KEY");
+        if (envSecretKey == nullptr) {
+            cerr << "Secret key environment variable not set." << endl;
+            return false;
+        }
+
+        // Compare the entered loginKey with the secret key from the environment variable
+        string secretKey = envSecretKey;
+        return loginKey == secretKey;
+    }
 
     string exec(const char* cmd) {
         char buffer[128];
@@ -106,10 +128,10 @@ private:
     }
 
     void receiveResponse(tcp::socket& socket) {
-          time_t now = time(0);
-            tm* timeInfo = localtime(&now);
-            char timestamp[20];
-            strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
+        time_t now = time(0);
+        tm* timeInfo = localtime(&now);
+        char timestamp[20];
+        strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
         char response_data[1024];
         boost::system::error_code read_error;
         size_t response_length = socket.read_some(buffer(response_data), read_error);
@@ -119,27 +141,27 @@ private:
         } else if (read_error) {
             cerr << "Error reading response from the server: " << read_error.message() << endl;
         } else {
-            cout << "Received response from the server: " << string(response_data, response_length)<<"at"<<timestamp << endl;
+            cout << "Received response from the server: " << string(response_data, response_length) << " at " << timestamp << endl;
         }
     }
 
     void logSuccess() {
         std::ofstream logFile(logFilePath_, std::ios::app);
-   if (logFile.is_open()) {
-     if (logFile.tellp() == 0) {
-        // Add column names if the file is empty
-        logFile << "Result,Timestamp" << std::endl;
-    }
-    time_t now = time(0);
-    tm* timeInfo = localtime(&now);
-    char timestamp[20];
-    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
+        if (logFile.is_open()) {
+            if (logFile.tellp() == 0) {
+                // Add column names if the file is empty
+                logFile << "Result,Timestamp" << std::endl;
+            }
+            time_t now = time(0);
+            tm* timeInfo = localtime(&now);
+            char timestamp[20];
+            strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
 
-    logFile << "Data successfully sent at, " << timestamp << std::endl; // Separate values with commas
-    logFile.close();
-} else {
-    std::cerr << "Error opening log file for writing." << std::endl;
-}
+            logFile << "Data successfully sent at, " << timestamp << std::endl; // Separate values with commas
+            logFile.close();
+        } else {
+            std::cerr << "Error opening log file for writing." << std::endl;
+        }
     }
 };
 
