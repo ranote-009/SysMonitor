@@ -5,6 +5,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <string>
 #include <cstdlib>
+#include <cstdio>
 #include <ctime>
 
 using namespace std;
@@ -14,8 +15,8 @@ namespace pt = boost::property_tree;
 
 class SystemInfoClient {
 public:
-    SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath)
-        : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath) {
+    SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath, const std::string& connectionKey)
+        : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath), connectionKey_(connectionKey) {
     }
 
     void run() {
@@ -29,21 +30,15 @@ public:
             socket.connect(endpoint);
             cout << "Connected to the server" << endl;
 
-            // Ask the user to enter the login key
-            cout << "Enter the login key: ";
-            string loginKey;
-            cin >> loginKey;
+            // Send the connection key to the server
+            sendKey(socket);
 
-            if (authenticate(loginKey)) {
-                cout << "Authentication successful." << endl;
-                while (true) {
-                    sendSystemInfo(socket);
-                    receiveResponse(socket);
-                    logSuccess(); // Log success with timestamp
-                    sleep(5);
-                }
-            } else {
-                cout << "Authentication failed. Connection terminated." << endl;
+            while (true) {
+                // Continue with your existing logic...
+                sendSystemInfo(socket);
+                receiveResponse(socket);
+                logSuccess();
+                sleep(5);
             }
 
             // Close the socket when done
@@ -66,19 +61,7 @@ private:
     int serverPort_;
     std::string logFilePath_;
     int reconnectAttempts_ = 0;
-
-    bool authenticate(const std::string& loginKey) {
-        // Get the secret key from the environment variable
-        const char* envSecretKey = std::getenv("CLIENT_SECRET_KEY");
-        if (envSecretKey == nullptr) {
-            cerr << "Secret key environment variable not set." << endl;
-            return false;
-        }
-
-        // Compare the entered loginKey with the secret key from the environment variable
-        string secretKey = envSecretKey;
-        return loginKey == secretKey;
-    }
+    std::string connectionKey_;
 
     string exec(const char* cmd) {
         char buffer[128];
@@ -95,7 +78,7 @@ private:
         }
         pclose(pipe);
         size_t start = result.find_first_not_of(" \t\n\r\f\v");
-        size_t end = result.find_last_not_of(" \t\n\r\f\v");
+        size_t end = result.find last_not_of(" \t\n\r\f\v");
 
         if (start == std::string::npos || end == std::string::npos) {
             result.clear();
@@ -103,6 +86,17 @@ private:
             result = result.substr(start, end - start + 1);
         }
         return result;
+    }
+
+    void sendKey(tcp::socket& socket) {
+        boost::system::error_code write_error;
+        size_t bytes_written = socket.write_some(buffer(connectionKey_));
+
+        if (write_error) {
+            cerr << "Error sending connection key to the server: " << write_error.message() << endl;
+        } else {
+            cout << "Sent connection key to the server" << endl;
+        }
     }
 
     void sendSystemInfo(tcp::socket& socket) {
@@ -157,8 +151,7 @@ private:
             char timestamp[20];
             strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
 
-            logFile << "Data successfully sent at, " << timestamp << std::endl; // Separate values with commas
-            logFile.close();
+            logFile << "Data successfully sent at, " << timestamp << std::endl;
         } else {
             std::cerr << "Error opening log file for writing." << std::endl;
         }
@@ -166,7 +159,8 @@ private:
 };
 
 int main() {
-    SystemInfoClient client("127.0.0.1", 3000, "log.csv");
+    // Provide your connection key here
+    SystemInfoClient client("127.0.0.1", 3000, "log.csv", "CsGo@2023");
     client.run();
 
     return 0;
