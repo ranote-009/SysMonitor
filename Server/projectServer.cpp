@@ -1,12 +1,13 @@
 #include <iostream>
+#include <fstream>
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <string>
+#include <thread>
 #include <mysql_driver.h>
 #include <mysql_connection.h>
-#include <fstream>
 #include <cppconn/prepared_statement.h>
-#include <libssh/libssh.h>
 
 using namespace std;
 using namespace sql;
@@ -18,7 +19,7 @@ using ip::tcp;
 namespace pt = boost::property_tree;
 
 class DatabaseManager {
-    public:
+public:
     DatabaseManager() {
         try {
             driver = sql::mysql::get_mysql_driver_instance();
@@ -34,12 +35,9 @@ class DatabaseManager {
         if (con) {
             delete con;
         }
-    }   
+    }
 
-};
-
-
-void CreateTables(Connection* con) {
+    void CreateTables(Connection* con) {
         try {
             Statement* stmt = con->createStatement();
             const char* createClientsTableSQL = R"(
@@ -64,6 +62,27 @@ void CreateTables(Connection* con) {
             delete stmt;
         } catch (const std::exception& e) {
             std::cerr << "CreateTables Exception: " << e.what() << std::endl;
+        }
+    }
+
+    bool VerifyConnectionKey(tcp::socket& socket, const std::string& expectedKey) {
+        char key_data[1024];
+        boost::system::error_code read_error;
+        size_t key_length = socket.read_some(buffer(key_data), read_error);
+
+        if (read_error) {
+            cerr << "Error reading connection key: " << read_error.message() << endl;
+            return false;
+        }
+
+        string receivedKey(key_data, key_length);
+
+        if (receivedKey == expectedKey) {
+            cout << "Connection key is valid. Client is authorized." << endl;
+            return true;
+        } else {
+            cerr << "Invalid connection key. Closing the connection." << endl;
+            return false;
         }
     }
 
@@ -133,7 +152,7 @@ void CreateTables(Connection* con) {
         } catch (const std::exception& e) {
             std::cerr << "StoreSystemInfo Exception: " << e.what() << std::endl;
         }
-    
+    }
 
 private:
     sql::mysql::MySQL_Driver* driver;
@@ -142,7 +161,7 @@ private:
 
 class Server {
 public:
-    Server() {
+    Server(const std::string& connectionKey) : connectionKey_(connectionKey) {
         try {
             io_service service;
             tcp::acceptor acceptor(service, tcp::endpoint(tcp::v4(), 3000));
@@ -152,12 +171,11 @@ public:
                 tcp::socket socket(service);
                 acceptor.accept(socket);
 
-                // Authenticate the client via SSH here
-                if (AuthenticateClientSSH(socket)) {
+                if (db.VerifyConnectionKey(socket, connectionKey_)) {
                     thread(&Server::HandleClient, this, std::move(socket)).detach();
                 } else {
-                    cerr << "SSH authentication failed for the client." << endl;
-                    // Handle unauthorized client here
+                    socket.close();
+                    cout << "Unauthorized client disconnected." << endl;
                 }
             }
         } catch (const exception& e) {
@@ -165,43 +183,7 @@ public:
         }
     }
 
-    // SSH Authentication Function
-    bool AuthenticateClientSSH(tcp::socket &socket) {
-        // Initialize libssh session
-        ssh_session ssh_session = ssh_new();
-
-        if (ssh_session == nullptr) {
-            cerr << "Failed to create SSH session." << endl;
-            return false;
-        }
-
-        // Set SSH options, including host key checking and authentication methods
-        ssh_options_set(ssh_session, SSH_OPTIONS_HOST, "localhost");
-        ssh_options_set(ssh_session, SSH_OPTIONS_USER, "shivanshu"/*your ssh username*/);
-        ssh_options_set(ssh_session, SSH_OPTIONS_LOG_VERBOSITY, SSH_LOG_NOLOG);
-        
-        // Connect to the SSH server
-        if (ssh_connect(ssh_session) != SSH_OK) {
-            cerr << "SSH connection failed." << endl;
-            ssh_free(ssh_session);
-            return false;
-        }
-
-        // Authenticate using SSH key
-        if (ssh_userauth_publickey_auto(ssh_session, nullptr, nullptr) != SSH_AUTH_SUCCESS) {
-            cerr << "SSH key authentication failed." << endl;
-            ssh_disconnect(ssh_session);
-            ssh_free(ssh_session);
-            return false;
-        }
-
-        // SSH authentication successful
-        ssh_disconnect(ssh_session);
-        ssh_free(ssh_session);
-        return true;
-    }
-
-     void HandleClient(tcp::socket&& socket) {
+    void HandleClient(tcp::socket&& socket) {
         try {
             cout << "Client connected: " << socket.remote_endpoint() << endl;
 
@@ -243,10 +225,12 @@ public:
     }
 
 private:
+    std::string connectionKey_;
     DatabaseManager db;
 };
 
 int main() {
-    Server server;
+    
+    Server server("CsGo@2023");
     return 0;
 }
