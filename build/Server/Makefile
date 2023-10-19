@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/mohit/Desktop/project/SysMonitor
+CMAKE_SOURCE_DIR = /home/abhsihek/SysMonitor/SysMonitor
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/mohit/Desktop/project/SysMonitor/build
+CMAKE_BINARY_DIR = /home/abhsihek/SysMonitor/SysMonitor/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/mohit/Desktop/project/SysMonitor/build/CMakeFiles /home/mohit/Desktop/project/SysMonitor/build/Server//CMakeFiles/progress.marks
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/mohit/Desktop/project/SysMonitor/build/CMakeFiles 0
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/abhsihek/SysMonitor/SysMonitor/build/CMakeFiles /home/abhsihek/SysMonitor/SysMonitor/build/Server//CMakeFiles/progress.marks
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/abhsihek/SysMonitor/SysMonitor/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/clean
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/preinstall
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/preinstall
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 Server/CMakeFiles/server.dir/rule:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/CMakeFiles/server.dir/rule
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Server/CMakeFiles/server.dir/rule
 .PHONY : Server/CMakeFiles/server.dir/rule
 
 # Convenience name for target.
@@ -127,7 +127,7 @@ server: Server/CMakeFiles/server.dir/rule
 
 # fast build rule for target.
 server/fast:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Server/CMakeFiles/server.dir/build.make Server/CMakeFiles/server.dir/build
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Server/CMakeFiles/server.dir/build.make Server/CMakeFiles/server.dir/build
 .PHONY : server/fast
 
 projectServer.o: projectServer.cpp.o
@@ -135,7 +135,7 @@ projectServer.o: projectServer.cpp.o
 
 # target to build an object file
 projectServer.cpp.o:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Server/CMakeFiles/server.dir/build.make Server/CMakeFiles/server.dir/projectServer.cpp.o
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Server/CMakeFiles/server.dir/build.make Server/CMakeFiles/server.dir/projectServer.cpp.o
 .PHONY : projectServer.cpp.o
 
 projectServer.i: projectServer.cpp.i
@@ -143,7 +143,7 @@ projectServer.i: projectServer.cpp.i
 
 # target to preprocess a source file
 projectServer.cpp.i:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Server/CMakeFiles/server.dir/build.make Server/CMakeFiles/server.dir/projectServer.cpp.i
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Server/CMakeFiles/server.dir/build.make Server/CMakeFiles/server.dir/projectServer.cpp.i
 .PHONY : projectServer.cpp.i
 
 projectServer.s: projectServer.cpp.s
@@ -151,7 +151,7 @@ projectServer.s: projectServer.cpp.s
 
 # target to generate assembly for a file
 projectServer.cpp.s:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Server/CMakeFiles/server.dir/build.make Server/CMakeFiles/server.dir/projectServer.cpp.s
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(MAKE) $(MAKESILENT) -f Server/CMakeFiles/server.dir/build.make Server/CMakeFiles/server.dir/projectServer.cpp.s
 .PHONY : projectServer.cpp.s
 
 # Help Target
@@ -177,6 +177,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/mohit/Desktop/project/SysMonitor/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/abhsihek/SysMonitor/SysMonitor/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

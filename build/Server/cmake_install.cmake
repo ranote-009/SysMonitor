@@ -1,4 +1,4 @@
-# Install script for directory: /home/mohit/Desktop/project/SysMonitor/Server
+# Install script for directory: /home/abhsihek/SysMonitor/SysMonitor/Server
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

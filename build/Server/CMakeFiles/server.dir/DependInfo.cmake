@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/mohit/Desktop/project/SysMonitor/Server/projectServer.cpp" "Server/CMakeFiles/server.dir/projectServer.cpp.o" "gcc" "Server/CMakeFiles/server.dir/projectServer.cpp.o.d"
+  "/home/abhsihek/SysMonitor/SysMonitor/Server/projectServer.cpp" "Server/CMakeFiles/server.dir/projectServer.cpp.o" "gcc" "Server/CMakeFiles/server.dir/projectServer.cpp.o.d"
   )
 
 # Targets to which this target links.

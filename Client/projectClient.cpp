@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
+#include <chrono>
+#include <future>
+
 
 using namespace std;
 using namespace boost::asio;
@@ -33,7 +36,7 @@ public:
             while (true) {
                 sendSystemInfo(socket);
                 receiveResponse(socket);
-                logSuccess(); // Log success with timestamp
+              
                 sleep(5);
             }
 
@@ -106,24 +109,47 @@ private:
     }
 
     void receiveResponse(tcp::socket& socket) {
-          time_t now = time(0);
-            tm* timeInfo = localtime(&now);
-            char timestamp[20];
-            strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
-        char response_data[1024];
+       
         boost::system::error_code read_error;
-        size_t response_length = socket.read_some(buffer(response_data), read_error);
+         bool data_received = false;
+        std::array<char, 128> response_data; 
+        size_t response_length ;
+       // size_t response_length = socket.read_some(buffer(response_data), read_error);
 
-        if (read_error == boost::asio::error::eof) {
-            cout << "Server disconnected" << endl;
-        } else if (read_error) {
-            cerr << "Error reading response from the server: " << read_error.message() << endl;
+ std::future<size_t> result = std::async(std::launch::async, [&](){
+        boost::system::error_code read_error;
+       // Adjust the buffer size as needed
+      response_length = socket.read_some(boost::asio::buffer(response_data), read_error);
+        if(!read_error) {
+            return response_length;
         } else {
-            cout << "Received response from the server: " << string(response_data, response_length)<<"at"<<timestamp << endl;
+            return static_cast<size_t>(0);
         }
+    });
+
+    // Creating a timer for 5 seconds
+    std::chrono::milliseconds timeout(5000);
+    std::future_status status = result.wait_for(timeout);
+
+  
+
+    if (status == std::future_status::ready) {
+        size_t response_length = result.get();
+        if(response_length > 0) {
+            data_received = true;
+        }
+    }else {
+        std::cout << "Data sending failed." << std::endl;
+          logSuccess("Data sending failed at, "); // Log success with timestamp
     }
 
-    void logSuccess() {
+    if (data_received) {
+        std::cout << "Data received successfully." << std::endl;
+          logSuccess("Data successfully sent at, "); // Log success with timestamp
+    }
+    }
+
+    void logSuccess(string result) {
         std::ofstream logFile(logFilePath_, std::ios::app);
    if (logFile.is_open()) {
      if (logFile.tellp() == 0) {
@@ -135,7 +161,7 @@ private:
     char timestamp[20];
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
 
-    logFile << "Data successfully sent at, " << timestamp << std::endl; // Separate values with commas
+    logFile << result << timestamp << std::endl; // Separate values with commas
     logFile.close();
 } else {
     std::cerr << "Error opening log file for writing." << std::endl;
@@ -144,7 +170,7 @@ private:
 };
 
 int main() {
-    SystemInfoClient client("127.0.0.1", 3000, "log.csv");
+    SystemInfoClient client("10.11.245.225", 3000, "log.csv");
     client.run();
 
     return 0;
