@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(ClientServerGO)
 
+add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 # Find and configure Boost
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 
