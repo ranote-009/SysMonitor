@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
+#include <thread>
+#include <chrono>
 
 namespace asio = boost::asio;
 namespace beast = boost::beast;
