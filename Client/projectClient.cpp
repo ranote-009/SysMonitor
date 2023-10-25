@@ -10,7 +10,6 @@
 #include <cstdio>
 #include <ctime>
 #include <thread>
-#include <chrono>
 
 namespace asio = boost::asio;
 namespace beast = boost::beast;
@@ -38,7 +37,7 @@ public:
             std::this_thread::sleep_for(std::chrono::seconds(5));
             if (reconnectAttempts_ < 2) {
                 reconnectAttempts_++;
-                ioc_.reset();
+                ioc_.restart();
                 run();  // Reconnect and continue
             } else {
                 std::cout << "Not able to connect" << std::endl;
@@ -82,46 +81,79 @@ private:
     }
 
     void connect() {
-        asio::ip::tcp::resolver resolver(ioc_);
-        auto results = resolver.resolve(serverAddress_, std::to_string(serverPort_));
+        try {
+            asio::ip::tcp::resolver resolver(ioc_);
+            auto results = resolver.resolve(serverAddress_, std::to_string(serverPort_));
 
-        asio::connect(ws_.next_layer(), results.begin(), results.end());
-        ws_.handshake(serverAddress_, "/");
+            asio::connect(ws_.next_layer(), results.begin(), results.end());
+
+            beast::error_code ec;
+            ws_.handshake(serverAddress_, "/", ec);
+            if (ec) {
+                throw std::runtime_error("WebSocket handshake failed");
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Connect Exception: " << e.what() << std::endl;
+            throw;
+        }
     }
 
     void sendSystemInfo() {
-        pt::ptree systemInfoTree;
-        systemInfoTree.put("macaddress", exec("ifconfig | grep -o -E '([0-9a-fA-F]{2}:){5}([0-9a-fA-F]{2})' | paste -d ' ' - -"));
-        systemInfoTree.put("hostname", exec("hostname"));
-        systemInfoTree.put("cpu_usage", exec("top -b -n 1 | grep '%Cpu(s)' | awk '{print $2+$4+$6+$10+$12+$14}'"));
-        systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
-        systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
+        try {
+            pt::ptree systemInfoTree;
+            systemInfoTree.put("macaddress", exec("ifconfig | grep -o -E '([0-9a-fA-F]{2}:){5}([0-9a-fA-F]{2})' | paste -d ' ' - -"));
+            systemInfoTree.put("hostname", exec("hostname"));
+            systemInfoTree.put("cpu_usage", exec("top -b -n 1 | grep '%Cpu(s)' | awk '{print $2+$4+$6+$10+$12+$14}'"));
+            systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
+            systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
 
-        std::ostringstream systemInfoStream;
-        pt::write_json(systemInfoStream, systemInfoTree);
-        std::string systemInfo = systemInfoStream.str();
+            std::ostringstream systemInfoStream;
+            pt::write_json(systemInfoStream, systemInfoTree);
+            std::string systemInfo = systemInfoStream.str();
 
-        ws_.write(asio::buffer(systemInfo));
-        ws_.read(buffer_);
+            beast::error_code ec;
+            ws_.write(asio::buffer(systemInfo), ec);
+            if (ec) {
+                throw std::runtime_error("WebSocket write error");
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Send System Info Exception: " << e.what() << std::endl;
+            throw;
+        }
     }
 
     void receiveResponse() {
-        ws_.read(buffer_);
-        std::cout << "Received response from the server: " << beast::buffers_to_string(buffer_.cdata()) << std::endl;
+        try {
+            beast::error_code ec;
+            ws_.read(buffer_, ec);
+            if (ec) {
+                throw std::runtime_error("WebSocket read error");
+            }
+            std::cout << "Received response from the server: " << beast::buffers_to_string(buffer_.cdata()) << std::endl;
+              buffer_.consume(buffer_.size());
+        } catch (const std::exception& e) {
+            std::cerr << "Receive Response Exception: " << e.what() << std::endl;
+            throw;
+        }
     }
 
     void logSuccess() {
-        std::ofstream logFile(logFilePath_, std::ios::app);
-        if (logFile.is_open()) {
-            time_t now = std::time(0);
-            tm* timeInfo = localtime(&now);
-            char timestamp[20];
-            std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
+        try {
+            std::ofstream logFile(logFilePath_, std::ios::app);
+            if (logFile.is_open()) {
+                time_t now = std::time(0);
+                tm* timeInfo = std::localtime(&now);
+                char timestamp[20];
+                std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
 
-            logFile << "Data successfully sent at " << timestamp << std::endl;
-            logFile.close();
-        } else {
-            std::cerr << "Error opening log file for writing." << std::endl;
+                logFile << "Data successfully sent at " << timestamp << std::endl;
+                logFile.close();
+            } else {
+                throw std::runtime_error("Error opening log file for writing.");
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Log Success Exception: " << e.what() << std::endl;
+            throw;
         }
     }
 };

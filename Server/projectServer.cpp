@@ -24,7 +24,7 @@ public:
         try {
             driver = sql::mysql::get_mysql_driver_instance();
             con = driver->connect("tcp://localhost:3306", "root", "");
-            con->setSchema("testdb");
+            con->setSchema("sys_info");
             CreateTables(con);
         } catch (const std::exception& e) {
             std::cerr << "DatabaseManager Exception: " << e.what() << std::endl;
@@ -37,7 +37,7 @@ public:
         }
     }
 
-    void CreateTables(Connection* con) {
+      void CreateTables(Connection* con) {
         try {
             Statement* stmt = con->createStatement();
             const char* createClientsTableSQL = R"(
@@ -122,7 +122,6 @@ public:
 private:
     sql::mysql::MySQL_Driver* driver;
     Connection* con;
-
 };
 
 class Server {
@@ -147,16 +146,16 @@ public:
         try {
             cout << "Client connected: " << socket.remote_endpoint() << endl;
 
-            // Wrap the raw socket in a WebSocket stream
             websocket::stream<tcp::socket> ws(std::move(socket));
 
             // Perform WebSocket handshake
-            // beast::error_code ec;
-            // ws.handshake(ec);
-            // if (ec) {
-            //     cerr << "WebSocket handshake failed: " << ec.message() << endl;
-            //     return;
-            // }
+            beast::error_code ec;
+           
+            ws.accept(ec);
+            if (ec) {
+                cerr << "WebSocket handshake failed: " << ec.message() << endl;
+                return;
+            }
 
             while (1) {
                 beast::flat_buffer buffer;
@@ -170,25 +169,33 @@ public:
                 string received_data(beast::buffers_to_string(buffer.data()));
                 cout << "Received " << buffer.size() << " bytes of data from the client" << endl;
 
-                // Parse the JSON
-                pt::ptree received_tree;
-                istringstream received_stream(received_data);
-                pt::read_json(received_stream, received_tree);
+                try {
+                    pt::ptree received_tree;
+                    istringstream received_stream(received_data);
+                    pt::read_json(received_stream, received_tree);
 
-                string macaddress = received_tree.get<string>("macaddress");
-                string hostname = received_tree.get<string>("hostname");
-                string cpuUsage = received_tree.get<string>("cpu_usage");
-                string ramUsage = received_tree.get<string>("ram_usage");
-                string modelName = received_tree.get<string>("model_name");
+                     string macaddress = received_tree.get<string>("macaddress");
+                    string hostname = received_tree.get<string>("hostname");
+                     string cpuUsage = received_tree.get<string>("cpu_usage");
+                     string ramUsage = received_tree.get<string>("ram_usage");
+                     string modelName = received_tree.get<string>("model_name");
 
                 cout << "\nReceived macaddress: " << macaddress << endl;
                 cout << "Received hostname: " << hostname << endl;
                 cout << "Received CPU Usage: " << cpuUsage << endl;
                 cout << "Received RAM Usage: " << ramUsage << endl;
                 cout << "Received Model Name: " << modelName << endl;
-
-                // Store data in the database
+                   try {
+                    // Your existing code for storing data in the database
+                      // Store data in the database
                 db.StoreSystemInfo(macaddress, hostname, cpuUsage, ramUsage);
+
+                } catch (const std::exception& e) {
+                    cerr << "Database Exception: " << e.what() << endl;
+                    return;
+                }
+
+              
 
                 // Send a success response back to the client
                 string successResponse = "Data transfer was successful!";
@@ -200,14 +207,18 @@ public:
                 } else {
                     cout << "Sent success response to the client" << endl;
                 }
+            
+
+                } catch (const std::exception& e) {
+                    cerr << "JSON Parsing Exception: " << e.what() << endl;
+                    return;
+                }
+
             }
-        } 
-    
-        catch (const exception& e) {
+        } catch (const exception& e) {
             cerr << "HandleClient Exception: " << e.what() << endl;
         }
     }
-
 
 private:
     DatabaseManager db;
