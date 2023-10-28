@@ -78,7 +78,7 @@ private:
         }
         pclose(pipe);
         size_t start = result.find_first_not_of(" \t\n\r\f\v");
-        size_t end = result.find last_not_of(" \t\n\r\f\v");
+        size_t end = result.find_last_not_of(" \t\n\r\f\v");
 
         if (start == std::string::npos || end == std::string::npos) {
             result.clear();
