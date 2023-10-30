@@ -2,6 +2,7 @@
 #include <fstream>
 #include <boost/asio.hpp>
 #include <boost/beast/core.hpp>
+#include <boost/beast/ssl.hpp> 
 #include <boost/beast/websocket.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -13,6 +14,7 @@
 
 namespace asio = boost::asio;
 namespace beast = boost::beast;
+namespace ssl = asio::ssl; // SSL namespace
 namespace http = beast::http;
 namespace websocket = beast::websocket;
 namespace pt = boost::property_tree;
@@ -20,7 +22,12 @@ namespace pt = boost::property_tree;
 class SystemInfoClient {
 public:
     SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath)
-        : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath), ioc_(), ws_(ioc_) {
+        : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath), ioc_(), ws_(ioc_, ctx) {
+        // Load root certificate (you should replace with your CA certificate)
+        //ctx_.set_default_verify_paths();
+        ctx.load_verify_file("server.crt");
+
+        ctx.set_verify_mode(ssl::verify_peer); // Replace with your CA certificate path
     }
 
     void run() {
@@ -29,7 +36,7 @@ public:
             while (true) {
                 sendSystemInfo();
                 receiveResponse();
-                logSuccess(); // Log success with timestamp
+               
                 std::this_thread::sleep_for(std::chrono::seconds(5));
             }
         } catch (const std::exception& e) {
@@ -52,7 +59,8 @@ private:
     int reconnectAttempts_ = 0;
 
     asio::io_context ioc_;
-    websocket::stream<asio::ip::tcp::socket> ws_;
+    ssl::context ctx{ssl::context::tlsv12_client};
+   websocket::stream<beast::ssl_stream<asio::ip::tcp::socket>> ws_;
     beast::flat_buffer buffer_;
 
     std::string exec(const char* cmd) {
@@ -85,9 +93,14 @@ private:
             asio::ip::tcp::resolver resolver(ioc_);
             auto results = resolver.resolve(serverAddress_, std::to_string(serverPort_));
 
-            asio::connect(ws_.next_layer(), results.begin(), results.end());
+            asio::connect(ws_.next_layer().next_layer(), results.begin(), results.end());
 
             beast::error_code ec;
+            ws_.next_layer().handshake(ssl::stream_base::client, ec);
+            if (ec) {
+                throw std::runtime_error("WebSocket handshake failed");
+            }
+
             ws_.handshake(serverAddress_, "/", ec);
             if (ec) {
                 throw std::runtime_error("WebSocket handshake failed");
@@ -112,7 +125,14 @@ private:
             std::string systemInfo = systemInfoStream.str();
 
             beast::error_code ec;
-            ws_.write(asio::buffer(systemInfo), ec);
+            size_t bytes_written=ws_.write(asio::buffer(systemInfo), ec);
+
+              if (ec) {
+                std::cerr << "Error sending data to the server: " << ec.message() << std::endl;
+             } 
+             else {
+             std::cout << "Sent " << bytes_written << " bytes of data to the server" << std::endl;
+              }
             if (ec) {
                 throw std::runtime_error("WebSocket write error");
             }
@@ -123,43 +143,124 @@ private:
     }
 
     void receiveResponse() {
-        try {
-            beast::error_code ec;
-            ws_.read(buffer_, ec);
-            if (ec) {
-                throw std::runtime_error("WebSocket read error");
-            }
-            std::cout << "Received response from the server: " << beast::buffers_to_string(buffer_.cdata()) << std::endl;
-              buffer_.consume(buffer_.size());
-        } catch (const std::exception& e) {
-            std::cerr << "Receive Response Exception: " << e.what() << std::endl;
-            throw;
+        // try {
+        //     beast::error_code ec;
+        //     ws_.read(buffer_, ec);
+        //     if (ec) {
+        //         throw std::runtime_error("WebSocket read error");
+        //     }
+
+        //     std::string response= beast::buffers_to_string(buffer_.cdata());
+        //      logSuccess(response);
+            
+        //     std::cout << "Received response from the server: " << response << std::endl;
+        //       buffer_.consume(buffer_.size());
+        // } catch (const std::exception& e) {
+        //     std::cerr << "Receive Response Exception: " << e.what() << std::endl;
+        //     throw;
+        // }
+//         try {
+//     beast::error_code ec;
+//     beast::flat_buffer buffer;
+//     std::size_t bytes_transferred = 0;
+ 
+//     // Set a timer for 5 seconds
+//     std::chrono::seconds timeout_duration(5);
+//     boost::asio::steady_timer timer(ioc_);
+//     timer.expires_after(timeout_duration);
+ 
+//     // Set up asynchronous read operation
+//     ws_.async_read(buffer, [&ec, &bytes_transferred](beast::error_code read_ec, std::size_t bt) {
+//         ec = read_ec;
+//         bytes_transferred = bt;
+//     });
+ 
+//     // Wait for the timer or the asynchronous read to complete
+//     ioc_.run_for(timeout_duration);
+ 
+//     if (ec == boost::asio::error::operation_aborted) {
+//         throw std::runtime_error("WebSocket read operation timed out");
+//     } else if (ec) {
+//         throw std::runtime_error("WebSocket read error: " + ec.message());
+//     } else {
+//         std::string received_data = beast::buffers_to_string(buffer.data());
+//         std::cout << "Received response from the server: " << received_data << std::endl;
+       
+//         if (!received_data.empty()) {
+//             logSuccess("Data received successfully at, "); // Log success with timestamp
+//         } else {
+//             logSuccess("Data receiving failed at, "); // Log success with timestamp
+//         }
+//     }
+// } catch (const std::exception& e) {
+//     std::cerr << "Receive Response Exception: " << e.what() << std::endl;
+  
+//     logSuccess("Exception in receiveResponse: " + std::string(e.what())); // Log error with timestamp and exception details
+//     throw;
+// }
+     
+        boost::system::error_code read_error;
+         bool data_received = false;
+        std::array<char, 128> response_data; 
+        size_t response_length ;
+       // size_t response_length = socket.read_some(buffer(response_data), read_error);
+
+ std::future<size_t> result = std::async(std::launch::async, [&](){
+        boost::system::error_code read_error;
+       // Adjust the buffer size as needed
+      response_length = ws_.read_some(boost::asio::buffer(response_data), read_error);
+        if(!read_error) {
+            return response_length;
+        } else {
+            return static_cast<size_t>(0);
         }
+    });
+
+    // Creating a timer for 5 seconds
+    std::chrono::milliseconds timeout(5000);
+    std::future_status status = result.wait_for(timeout);
+
+  
+
+    if (status == std::future_status::ready) {
+        size_t response_length = result.get();
+        if(response_length > 0) {
+            data_received = true;
+        }
+    }else {
+        std::cout << "Data sending failed." << std::endl;
+          logSuccess("Data sending failed at, "); // Log success with timestamp
     }
 
-    void logSuccess() {
-        try {
-            std::ofstream logFile(logFilePath_, std::ios::app);
-            if (logFile.is_open()) {
-                time_t now = std::time(0);
-                tm* timeInfo = std::localtime(&now);
-                char timestamp[20];
-                std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
+    if (data_received) {
+        std::cout <<"Received \t"<<response_length<< "\tbytes of Data successfully." << std::endl;
+          logSuccess("Data successfully sent at, "); // Log success with timestamp
+    }
+    }
+    
 
-                logFile << "Data successfully sent at " << timestamp << std::endl;
-                logFile.close();
-            } else {
-                throw std::runtime_error("Error opening log file for writing.");
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "Log Success Exception: " << e.what() << std::endl;
-            throw;
-        }
+    void logSuccess(std::string result) {
+        std::ofstream logFile(logFilePath_, std::ios::app);
+   if (logFile.is_open()) {
+     if (logFile.tellp() == 0) {
+        // Add column names if the file is empty
+        logFile << "Result,Timestamp" << std::endl;
+    }
+    time_t now = time(0);
+    tm* timeInfo = localtime(&now);
+    char timestamp[20];
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
+
+    logFile << result << timestamp << std::endl; // Separate values with commas
+    logFile.close();
+} else {
+    std::cerr << "Error opening log file for writing." << std::endl;
+}
     }
 };
 
 int main() {
-    SystemInfoClient client("127.0.0.1", 3000, "log.txt");
+    SystemInfoClient client("10.11.245.154", 8080, "log.csv");
     client.run();
 
     return 0;

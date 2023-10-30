@@ -10,7 +10,7 @@ add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 include_directories(${Boost_INCLUDE_DIRS}) 
 add_executable(${PROJECT_NAME} projectClient.cpp) 
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES}) 
-target_link_libraries(${PROJECT_NAME} pthread) 
+target_link_libraries(${PROJECT_NAME} pthread ssl crypto) 
 # add_executable(client projectClient.cpp)
 
 # # target_link_libraries(client

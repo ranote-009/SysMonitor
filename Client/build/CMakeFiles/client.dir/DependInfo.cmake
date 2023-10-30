@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/abhsihek/SysMonitor/SysMonitor/Client/projectClient.cpp" "CMakeFiles/client.dir/projectClient.cpp.o" "gcc" "CMakeFiles/client.dir/projectClient.cpp.o.d"
+  "/home/mohit/Desktop/project/SysMonitor/Client/projectClient.cpp" "CMakeFiles/client.dir/projectClient.cpp.o" "gcc" "CMakeFiles/client.dir/projectClient.cpp.o.d"
   )
 
 # Targets to which this target links.

@@ -1730,6 +1730,109 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
   /usr/include/boost/beast/websocket/impl/stream.hpp \
   /usr/include/boost/beast/websocket/impl/write.hpp \
   /usr/include/boost/beast/zlib.hpp \
+  /usr/include/boost/beast/websocket/ssl.hpp \
+  /usr/include/boost/asio/ssl/stream.hpp \
+  /usr/include/boost/asio/ssl/context.hpp \
+  /usr/include/boost/asio/ssl/context_base.hpp \
+  /usr/include/boost/asio/ssl/detail/openssl_types.hpp \
+  /usr/include/openssl/conf.h \
+  /usr/include/openssl/macros.h \
+  /usr/include/x86_64-linux-gnu/openssl/opensslconf.h \
+  /usr/include/x86_64-linux-gnu/openssl/configuration.h \
+  /usr/include/openssl/opensslv.h \
+  /usr/include/openssl/bio.h \
+  /usr/include/openssl/e_os2.h \
+  /usr/include/openssl/crypto.h \
+  /usr/include/c++/11/stdlib.h \
+  /usr/include/openssl/safestack.h \
+  /usr/include/openssl/stack.h \
+  /usr/include/openssl/types.h \
+  /usr/include/openssl/cryptoerr.h \
+  /usr/include/openssl/symhacks.h \
+  /usr/include/openssl/cryptoerr_legacy.h \
+  /usr/include/openssl/core.h \
+  /usr/include/openssl/bioerr.h \
+  /usr/include/openssl/lhash.h \
+  /usr/include/openssl/conferr.h \
+  /usr/include/openssl/conftypes.h \
+  /usr/include/openssl/ssl.h \
+  /usr/include/openssl/comp.h \
+  /usr/include/openssl/comperr.h \
+  /usr/include/openssl/x509.h \
+  /usr/include/openssl/buffer.h \
+  /usr/include/openssl/buffererr.h \
+  /usr/include/openssl/evp.h \
+  /usr/include/openssl/core_dispatch.h \
+  /usr/include/openssl/evperr.h \
+  /usr/include/openssl/params.h \
+  /usr/include/openssl/bn.h \
+  /usr/include/openssl/bnerr.h \
+  /usr/include/openssl/objects.h \
+  /usr/include/openssl/obj_mac.h \
+  /usr/include/openssl/asn1.h \
+  /usr/include/openssl/asn1err.h \
+  /usr/include/openssl/objectserr.h \
+  /usr/include/openssl/ec.h \
+  /usr/include/openssl/ecerr.h \
+  /usr/include/openssl/rsa.h \
+  /usr/include/openssl/rsaerr.h \
+  /usr/include/openssl/dsa.h \
+  /usr/include/openssl/dh.h \
+  /usr/include/openssl/dherr.h \
+  /usr/include/openssl/dsaerr.h \
+  /usr/include/openssl/sha.h \
+  /usr/include/openssl/x509err.h \
+  /usr/include/openssl/x509_vfy.h \
+  /usr/include/openssl/pkcs7.h \
+  /usr/include/openssl/pkcs7err.h \
+  /usr/include/openssl/ocsp.h \
+  /usr/include/openssl/http.h \
+  /usr/include/openssl/x509v3.h \
+  /usr/include/openssl/x509v3err.h \
+  /usr/include/openssl/ocsperr.h \
+  /usr/include/openssl/pem.h \
+  /usr/include/openssl/pemerr.h \
+  /usr/include/openssl/hmac.h \
+  /usr/include/openssl/async.h \
+  /usr/include/openssl/asyncerr.h \
+  /usr/include/openssl/ct.h \
+  /usr/include/openssl/cterr.h \
+  /usr/include/openssl/sslerr.h \
+  /usr/include/openssl/sslerr_legacy.h \
+  /usr/include/openssl/prov_ssl.h \
+  /usr/include/openssl/ssl2.h \
+  /usr/include/openssl/ssl3.h \
+  /usr/include/openssl/tls1.h \
+  /usr/include/openssl/dtls1.h \
+  /usr/include/openssl/srtp.h \
+  /usr/include/openssl/engine.h \
+  /usr/include/openssl/rand.h \
+  /usr/include/openssl/randerr.h \
+  /usr/include/openssl/ui.h \
+  /usr/include/openssl/uierr.h \
+  /usr/include/openssl/err.h \
+  /usr/include/openssl/engineerr.h \
+  /usr/include/boost/asio/ssl/detail/openssl_init.hpp \
+  /usr/include/boost/asio/ssl/detail/impl/openssl_init.ipp \
+  /usr/include/boost/asio/ssl/detail/password_callback.hpp \
+  /usr/include/boost/asio/ssl/detail/verify_callback.hpp \
+  /usr/include/boost/asio/ssl/verify_context.hpp \
+  /usr/include/boost/asio/ssl/verify_mode.hpp \
+  /usr/include/boost/asio/ssl/impl/context.hpp \
+  /usr/include/boost/asio/ssl/impl/context.ipp \
+  /usr/include/boost/asio/ssl/error.hpp \
+  /usr/include/boost/asio/ssl/impl/error.ipp \
+  /usr/include/boost/asio/ssl/detail/buffered_handshake_op.hpp \
+  /usr/include/boost/asio/ssl/detail/engine.hpp \
+  /usr/include/boost/asio/ssl/stream_base.hpp \
+  /usr/include/boost/asio/ssl/detail/impl/engine.ipp \
+  /usr/include/boost/asio/ssl/detail/handshake_op.hpp \
+  /usr/include/boost/asio/ssl/detail/io.hpp \
+  /usr/include/boost/asio/ssl/detail/stream_core.hpp \
+  /usr/include/boost/asio/ssl/detail/read_op.hpp \
+  /usr/include/boost/asio/ssl/detail/shutdown_op.hpp \
+  /usr/include/boost/asio/ssl/detail/write_op.hpp \
+  /usr/include/boost/beast/websocket/impl/ssl.hpp \
   /usr/include/boost/property_tree/ptree.hpp \
   /usr/include/boost/property_tree/ptree_fwd.hpp \
   /usr/include/boost/property_tree/string_path.hpp \
@@ -2203,8 +2306,6 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/c++/11/list:
 
-/usr/include/cppconn/build_config.h:
-
 /usr/include/boost/smart_ptr/scoped_ptr.hpp:
 
 /usr/include/boost/scoped_ptr.hpp:
@@ -2253,15 +2354,11 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/preprocessor/seq/for_each_i.hpp:
 
-/usr/include/boost/type_traits/conversion_traits.hpp:
-
 /usr/include/boost/concept/detail/has_constraints.hpp:
 
 /usr/include/boost/concept/detail/backward_compatibility.hpp:
 
 /usr/include/boost/concept_check.hpp:
-
-/usr/include/boost/range/concepts.hpp:
 
 /usr/include/boost/range/has_range_iterator.hpp:
 
@@ -2316,8 +2413,6 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/multi_index/detail/value_compare.hpp:
 
 /usr/include/boost/multi_index/detail/unbounded.hpp:
-
-/usr/include/boost/multi_index/detail/is_transparent.hpp:
 
 /usr/include/boost/multi_index/detail/promotes_arg.hpp:
 
@@ -2405,8 +2500,6 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/multi_index/detail/index_loader.hpp:
 
-/usr/include/boost/tuple/detail/tuple_basic.hpp:
-
 /usr/include/boost/ref.hpp:
 
 /usr/include/boost/tuple/tuple.hpp:
@@ -2436,8 +2529,6 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/multi_index/detail/allocator_traits.hpp:
 
 /usr/include/boost/multi_index/detail/adl_swap.hpp:
-
-/usr/include/boost/mpl/front_inserter.hpp:
 
 /usr/include/boost/mpl/pair_view.hpp:
 
@@ -2567,8 +2658,6 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mpl/bind.hpp:
 
-/usr/include/boost/mpl/aux_/preprocessed/gcc/arg.hpp:
-
 /usr/include/boost/mpl/aux_/arg_typedef.hpp:
 
 /usr/include/boost/mpl/aux_/arity_spec.hpp:
@@ -2605,10 +2694,6 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mpl/aux_/begin_end_impl.hpp:
 
-/usr/include/boost/core/noncopyable.hpp:
-
-/usr/include/boost/mpl/aux_/at_impl.hpp:
-
 /usr/include/boost/mpl/at_fwd.hpp:
 
 /usr/include/boost/mpl/aux_/preprocessed/gcc/greater_equal.hpp:
@@ -2636,6 +2721,124 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/type_index/type_index_facade.hpp:
 
 /usr/include/boost/property_tree/ptree_fwd.hpp:
+
+/usr/include/boost/asio/ssl/detail/shutdown_op.hpp:
+
+/usr/include/boost/asio/ssl/detail/handshake_op.hpp:
+
+/usr/include/boost/asio/ssl/detail/impl/engine.ipp:
+
+/usr/include/boost/range/concepts.hpp:
+
+/usr/include/boost/asio/ssl/detail/buffered_handshake_op.hpp:
+
+/usr/include/boost/asio/ssl/impl/error.ipp:
+
+/usr/include/boost/asio/ssl/impl/context.ipp:
+
+/usr/include/boost/asio/ssl/verify_mode.hpp:
+
+/usr/include/boost/mpl/aux_/preprocessed/gcc/arg.hpp:
+
+/usr/include/boost/asio/ssl/detail/verify_callback.hpp:
+
+/usr/include/boost/tuple/detail/tuple_basic.hpp:
+
+/usr/include/openssl/err.h:
+
+/usr/include/openssl/uierr.h:
+
+/usr/include/openssl/ui.h:
+
+/usr/include/boost/multi_index/detail/is_transparent.hpp:
+
+/usr/include/openssl/rand.h:
+
+/usr/include/openssl/srtp.h:
+
+/usr/include/openssl/ssl3.h:
+
+/usr/include/boost/mpl/front_inserter.hpp:
+
+/usr/include/openssl/sslerr_legacy.h:
+
+/usr/include/openssl/cterr.h:
+
+/usr/include/openssl/ct.h:
+
+/usr/include/openssl/asyncerr.h:
+
+/usr/include/openssl/async.h:
+
+/usr/include/openssl/pemerr.h:
+
+/usr/include/openssl/ocsp.h:
+
+/usr/include/openssl/x509_vfy.h:
+
+/usr/include/openssl/dherr.h:
+
+/usr/include/cppconn/build_config.h:
+
+/usr/include/openssl/dh.h:
+
+/usr/include/openssl/dsa.h:
+
+/usr/include/openssl/rsaerr.h:
+
+/usr/include/openssl/rsa.h:
+
+/usr/include/openssl/ecerr.h:
+
+/usr/include/openssl/ec.h:
+
+/usr/include/openssl/asn1err.h:
+
+/usr/include/openssl/obj_mac.h:
+
+/usr/include/openssl/bnerr.h:
+
+/usr/include/openssl/bn.h:
+
+/usr/include/openssl/params.h:
+
+/usr/include/boost/core/noncopyable.hpp:
+
+/usr/include/boost/mpl/aux_/at_impl.hpp:
+
+/usr/include/openssl/core_dispatch.h:
+
+/usr/include/openssl/evp.h:
+
+/usr/include/openssl/x509.h:
+
+/usr/include/openssl/comp.h:
+
+/usr/include/openssl/conftypes.h:
+
+/usr/include/openssl/lhash.h:
+
+/usr/include/openssl/bioerr.h:
+
+/usr/include/boost/type_traits/conversion_traits.hpp:
+
+/usr/include/openssl/cryptoerr.h:
+
+/usr/include/c++/11/stdlib.h:
+
+/usr/include/openssl/e_os2.h:
+
+/usr/include/openssl/opensslv.h:
+
+/usr/include/x86_64-linux-gnu/openssl/opensslconf.h:
+
+/usr/include/openssl/macros.h:
+
+/usr/include/openssl/conf.h:
+
+/usr/include/boost/asio/ssl/context_base.hpp:
+
+/usr/include/boost/beast/websocket/ssl.hpp:
 
 /usr/include/boost/beast/zlib.hpp:
 
@@ -2829,6 +3032,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/beast/http/message.hpp:
 
+/usr/include/openssl/comperr.h:
+
 /usr/include/boost/beast/http/impl/error.ipp:
 
 /usr/include/boost/beast/http/impl/error.hpp:
@@ -2863,9 +3068,15 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/beast/core/span.hpp:
 
+/usr/include/openssl/buffer.h:
+
 /usr/include/boost/beast/core/impl/saved_handler.hpp:
 
 /usr/include/boost/mpl/insert_range_fwd.hpp:
+
+/usr/include/boost/asio/ssl/detail/engine.hpp:
+
+/usr/include/openssl/objects.h:
 
 /usr/include/boost/beast/core/detail/ostream.hpp:
 
@@ -2880,6 +3091,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/mpl/set/set0.hpp:
 
 /usr/include/boost/beast/core/impl/flat_static_buffer.ipp:
+
+/usr/include/openssl/engineerr.h:
 
 /usr/include/boost/beast/core/impl/flat_static_buffer.hpp:
 
@@ -2939,6 +3152,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/type_traits/is_signed.hpp:
 
+/usr/include/openssl/hmac.h:
+
 /usr/include/boost/type_traits/is_object.hpp:
 
 /usr/include/boost/type_traits/is_list_constructible.hpp:
@@ -2972,6 +3187,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/type_traits/has_right_shift.hpp:
 
 /usr/include/boost/type_traits/has_pre_increment.hpp:
+
+/usr/include/openssl/asn1.h:
 
 /usr/include/boost/type_traits/detail/has_postfix_operator.hpp:
 
@@ -3055,6 +3272,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/intrusive/detail/minimal_less_equal_header.hpp:
 
+/usr/include/openssl/safestack.h:
+
 /usr/include/boost/intrusive/detail/tree_value_compare.hpp:
 
 /usr/include/boost/intrusive/detail/key_nodeptr_comp.hpp:
@@ -3089,6 +3308,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/intrusive/detail/hook_traits.hpp:
 
+/usr/include/boost/asio/ssl/detail/read_op.hpp:
+
 /usr/include/boost/move/detail/pointer_element.hpp:
 
 /usr/include/boost/intrusive/options.hpp:
@@ -3108,6 +3329,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/intrusive/detail/assert.hpp:
 
 /usr/include/boost/intrusive/intrusive_fwd.hpp:
+
+/usr/include/openssl/tls1.h:
 
 /usr/include/boost/intrusive/detail/node_cloner_disposer.hpp:
 
@@ -3163,6 +3386,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/optional/detail/optional_reference_spec.hpp:
 
+/usr/include/boost/asio/ssl/detail/openssl_types.hpp:
+
 /usr/include/boost/smart_ptr/make_shared.hpp:
 
 /usr/include/boost/optional/detail/optional_config.hpp:
@@ -3188,6 +3413,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/utility/result_of.hpp:
 
 /usr/include/boost/utility/compare_pointees.hpp:
+
+/usr/include/boost/asio/ssl/detail/openssl_init.hpp:
 
 /usr/include/boost/none_t.hpp:
 
@@ -3247,6 +3474,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/type_traits/remove_reference.hpp:
 
+/usr/include/boost/asio/ssl/detail/stream_core.hpp:
+
 /usr/include/boost/type_traits/is_rvalue_reference.hpp:
 
 /usr/include/boost/type_traits/is_lvalue_reference.hpp:
@@ -3287,6 +3516,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/beast/core/detail/async_base.hpp:
 
+/usr/include/openssl/dtls1.h:
+
 /usr/include/boost/type_traits/has_logical_and.hpp:
 
 /usr/include/boost/type_traits/add_const.hpp:
@@ -3325,6 +3556,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mp11/detail/config.hpp:
 
+/usr/include/openssl/objectserr.h:
+
 /usr/include/boost/mp11/detail/mp_fold.hpp:
 
 /usr/include/boost/archive/detail/abi_prefix.hpp:
@@ -3342,6 +3575,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/logic/tribool_fwd.hpp:
 
 /usr/include/boost/beast/core/impl/error.ipp:
+
+/usr/include/boost/asio/ssl/error.hpp:
 
 /usr/include/boost/beast/core/error.hpp:
 
@@ -3583,6 +3818,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mpl/vector.hpp:
 
+/usr/include/openssl/cryptoerr_legacy.h:
+
 /usr/include/x86_64-linux-gnu/bits/sigcontext.h:
 
 /usr/include/boost/asio/detail/limits.hpp:
@@ -3717,6 +3954,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/multi_index/sequenced_index_fwd.hpp:
 
+/usr/include/openssl/types.h:
+
 /usr/include/boost/beast/http/impl/message.hpp:
 
 /usr/include/boost/mpl/aux_/config/compiler.hpp:
@@ -3843,6 +4082,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/asio/traits/require_free.hpp:
 
+/usr/include/openssl/x509err.h:
+
 /usr/include/x86_64-linux-gnu/asm/posix_types.h:
 
 /usr/include/linux/posix_types.h:
@@ -3917,6 +4158,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/c++/11/bits/vector.tcc:
 
+/usr/include/openssl/bio.h:
+
 /usr/include/boost/asio/execution/schedule.hpp:
 
 /usr/include/boost/type_traits/is_enum.hpp:
@@ -3988,6 +4231,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/asio/local/connect_pair.hpp:
 
 /usr/include/x86_64-linux-gnu/asm/socket.h:
+
+/usr/include/openssl/symhacks.h:
 
 /usr/include/boost/preprocessor/repetition/enum_shifted_params.hpp:
 
@@ -4117,6 +4362,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mpl/front_fwd.hpp:
 
+/usr/include/openssl/http.h:
+
 /usr/include/c++/11/backward/auto_ptr.h:
 
 /usr/include/boost/asio/detail/assert.hpp:
@@ -4147,9 +4394,13 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
+/usr/include/boost/asio/ssl/impl/context.hpp:
+
 /usr/include/boost/asio/detail/thread_info_base.hpp:
 
 /usr/include/boost/asio/execution/detail/as_operation.hpp:
+
+/usr/include/boost/asio/ssl/detail/io.hpp:
 
 /usr/include/boost/asio/generic/stream_protocol.hpp:
 
@@ -4275,6 +4526,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
 
+/usr/include/openssl/dsaerr.h:
+
 /usr/include/boost/type_traits/has_greater_equal.hpp:
 
 /usr/include/boost/asio/detail/date_time_fwd.hpp:
@@ -4393,6 +4646,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
+/usr/include/x86_64-linux-gnu/openssl/configuration.h:
+
 /usr/include/boost/preprocessor/arithmetic/inc.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
@@ -4405,6 +4660,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/asio/impl/handler_alloc_hook.ipp:
 
+/usr/include/openssl/sslerr.h:
+
 /usr/include/c++/11/bits/locale_classes.tcc:
 
 /usr/include/c++/11/bits/cxxabi_init_exception.h:
@@ -4416,6 +4673,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/x86_64-linux-gnu/bits/select.h:
 
 /usr/include/boost/throw_exception.hpp:
+
+/usr/include/boost/asio/ssl/stream.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/types/time_t.h:
 
@@ -4523,9 +4782,13 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mpl/placeholders.hpp:
 
+/usr/include/boost/asio/ssl/detail/write_op.hpp:
+
 /usr/include/boost/asio/traits/prefer_free.hpp:
 
 /usr/include/boost/asio/detail/timer_queue_ptime.hpp:
+
+/usr/include/openssl/prov_ssl.h:
 
 /usr/include/boost/asio/detail/strand_service.hpp:
 
@@ -4536,6 +4799,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/beast/core/detail/bind_continuation.hpp:
 
 /usr/include/stdc-predef.h:
+
+/usr/include/openssl/randerr.h:
 
 /usr/include/boost/asio/detail/impl/timer_queue_set.ipp:
 
@@ -4584,6 +4849,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/asio/traits/prefer_member.hpp:
 
 /usr/include/boost/asio/traits/set_value_member.hpp:
+
+/usr/include/openssl/crypto.h:
 
 /usr/include/boost/predef/language/objc.h:
 
@@ -4647,6 +4914,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
 
+/usr/include/boost/asio/ssl/detail/password_callback.hpp:
+
 /usr/include/boost/mpl/bool_fwd.hpp:
 
 /usr/include/boost/predef/compiler/sgi_mipspro.h:
@@ -4656,6 +4925,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/asio/execution/outstanding_work.hpp:
 
 /usr/include/boost/multi_index_container.hpp:
+
+/usr/include/openssl/ssl2.h:
 
 /usr/include/boost/asio/local/stream_protocol.hpp:
 
@@ -4789,6 +5060,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mpl/set/aux_/erase_impl.hpp:
 
+/usr/include/openssl/ssl.h:
+
 /usr/include/boost/asio/detail/reactive_socket_connect_op.hpp:
 
 /usr/include/boost/asio/execution/connect.hpp:
@@ -4823,6 +5096,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/x86_64-linux-gnu/asm/ioctl.h:
 
+/usr/include/boost/asio/ssl/detail/impl/openssl_init.ipp:
+
 /usr/include/boost/intrusive/detail/exception_disposer.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h:
@@ -4840,6 +5115,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/cppconn/config.h:
 
 /usr/include/boost/asio/detail/thread_group.hpp:
+
+/usr/include/openssl/pkcs7.h:
 
 /usr/include/c++/11/streambuf:
 
@@ -4909,6 +5186,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mpl/aux_/static_cast.hpp:
 
+/usr/include/openssl/pkcs7err.h:
+
 /usr/include/boost/beast/http/string_body.hpp:
 
 /usr/include/stdlib.h:
@@ -4954,6 +5233,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/beast/core/detail/string.hpp:
 
 /usr/include/boost/asio/connect.hpp:
+
+/usr/include/boost/asio/ssl/verify_context.hpp:
 
 /usr/include/boost/mpl/aux_/msvc_eti_base.hpp:
 
@@ -5038,6 +5319,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/asio/is_executor.hpp:
 
 /usr/include/boost/config/detail/suffix.hpp:
+
+/usr/include/openssl/buffererr.h:
 
 /usr/include/boost/asio/execution/set_error.hpp:
 
@@ -5247,7 +5530,11 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/asio/detail/reactor.hpp:
 
+/usr/include/boost/beast/websocket/impl/ssl.hpp:
+
 /usr/include/boost/config/platform/linux.hpp:
+
+/usr/include/openssl/sha.h:
 
 /usr/include/boost/smart_ptr/detail/sp_convertible.hpp:
 
@@ -5353,6 +5640,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/detail/workaround.hpp:
 
+/usr/include/openssl/ocsperr.h:
+
 /usr/include/boost/asio/traits/static_require_concept.hpp:
 
 /usr/include/boost/asio/detail/buffer_sequence_adapter.hpp:
@@ -5436,6 +5725,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/asio/serial_port_base.hpp:
 
 /usr/include/boost/mpl/find.hpp:
+
+/usr/include/boost/asio/ssl/context.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
 
@@ -5605,6 +5896,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/utility/swap.hpp:
 
+/usr/include/openssl/core.h:
+
 /usr/include/boost/beast/http/field.hpp:
 
 /usr/include/boost/asio/basic_signal_set.hpp:
@@ -5652,6 +5945,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/c++/11/tr1/riemann_zeta.tcc:
 
 /usr/include/boost/type_traits/is_integral.hpp:
+
+/usr/include/openssl/x509v3err.h:
 
 /usr/include/boost/predef/library/std/stdcpp3.h:
 
@@ -5873,6 +6168,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/serialization/split_member.hpp:
 
+/usr/include/openssl/conferr.h:
+
 /usr/include/boost/preprocessor/punctuation/comma_if.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h:
@@ -6023,9 +6320,13 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/mpl/aux_/config/msvc_typename.hpp:
 
+/usr/include/openssl/pem.h:
+
 /usr/include/c++/11/bits/stl_pair.h:
 
 /usr/include/boost/preprocessor/array/elem.hpp:
+
+/usr/include/openssl/evperr.h:
 
 /usr/include/boost/preprocessor/array/data.hpp:
 
@@ -6455,6 +6756,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/asio/ip/unicast.hpp:
 
+/usr/include/openssl/engine.h:
+
 /usr/include/c++/11/clocale:
 
 /usr/include/c++/11/bits/istream.tcc:
@@ -6511,6 +6814,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 
 /usr/include/boost/predef/architecture/ptx.h:
 
+/usr/include/openssl/stack.h:
+
 /usr/include/boost/predef/architecture/riscv.h:
 
 /usr/include/boost/predef/architecture/sys390.h:
@@ -6518,6 +6823,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/predef/architecture/x86.h:
 
 /usr/include/boost/serialization/type_info_implementation.hpp:
+
+/usr/include/boost/asio/ssl/stream_base.hpp:
 
 /usr/include/boost/beast/http/detail/basic_parsed_list.hpp:
 
@@ -6548,6 +6855,8 @@ CMakeFiles/server.dir/projectServer.cpp.o: ../projectServer.cpp \
 /usr/include/boost/mpl/aux_/msvc_never_true.hpp:
 
 /usr/include/boost/predef/library/c.h:
+
+/usr/include/openssl/x509v3.h:
 
 /usr/include/boost/predef/compiler/kai.h:
 

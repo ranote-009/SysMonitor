@@ -10,7 +10,7 @@ add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 include_directories(${Boost_INCLUDE_DIRS}) 
 add_executable(${PROJECT_NAME} projectServer.cpp) 
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES}) 
-target_link_libraries(${PROJECT_NAME} mysqlcppconn) 
+target_link_libraries(${PROJECT_NAME} mysqlcppconn ssl pthread crypto) 
 
 
 # add_executable(server projectServer.cpp)
