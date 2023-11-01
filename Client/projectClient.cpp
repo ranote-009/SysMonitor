@@ -132,7 +132,7 @@ private:
             systemInfoTree.put("hostname", exec("hostname"));
             systemInfoTree.put("cpu_usage", exec("top -b -n 1 | grep '%Cpu(s)' | awk '{print $2+$4+$6+$10+$12+$14}'"));
             systemInfoTree.put("ram_usage", exec("free -m | awk '/Mem:/ {print $3\" MB used / \"$2\" MB total\"}'"));
-            systemInfoTree.put("model_name", exec("lscpu | grep 'Model name'"));
+            systemInfoTree.put("hdd_utilization", exec("df -h / | tail -1 | awk '{print $5}'"));
 
             std::ostringstream systemInfoStream;
             pt::write_json(systemInfoStream, systemInfoTree);

@@ -32,7 +32,7 @@ public:
         try {
             driver = sql::mysql::get_mysql_driver_instance();
             con = driver->connect("tcp://localhost:3306", "root", "");
-            con->setSchema("testdb");
+            con->setSchema("sys_info");
             CreateTables(con);
         } catch (const std::exception& e) {
             std::cerr << "DatabaseManager Exception: " << e.what() << std::endl;
@@ -55,14 +55,15 @@ public:
                 )
             )";
             const char* createSystemInfoTableSQL = R"(
-                CREATE TABLE IF NOT EXISTS systems_info (
+                CREATE TABLE IF NOT EXISTS systems_information (
                     system_info_id INT AUTO_INCREMENT PRIMARY KEY,
                     client_id INT,
                     hostname VARCHAR(255) NOT NULL,
                     cpuUsage VARCHAR(255) NOT NULL,
                     ramUsage VARCHAR(255) NOT NULL,
+                    hdd_utilization VARCHAR(255) NOT NULL,
                     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (client_id) REFERENCES clients(client_id)
+                    FOREIGN KEY (client_id) REFERENCES Clients(client_id)
                 )
             )";
             stmt->execute(createClientsTableSQL);
@@ -99,7 +100,7 @@ public:
         }
     }
 
-    void StoreSystemInfo(const std::string& macaddress, const std::string& hostname, const std::string& cpuUsage, const std::string& ramUsage) {
+    void StoreSystemInfo(const std::string& macaddress, const std::string& hostname, const std::string& cpuUsage, const std::string& ramUsage,const std::string& hdd_utilization) {
         try {
             CreateTables(con);
             StoreClientInfo(con, macaddress);
@@ -113,15 +114,16 @@ public:
                 clientId = resultSet->getInt("client_id");
             }
             PreparedStatement* insertSystemInfoStmt;
-            const char* insertSystemInfoSQL = "INSERT INTO systems_info (client_id, hostname, cpuUsage, ramUsage) VALUES (?, ?, ?, ?)";
+            const char* insertSystemInfoSQL = "INSERT INTO systems_information (client_id, hostname, cpuUsage, ramUsage, hdd_utilization) VALUES (?, ?, ?, ?, ? )";
             insertSystemInfoStmt = con->prepareStatement(insertSystemInfoSQL);
             insertSystemInfoStmt->setInt(1, clientId);
             insertSystemInfoStmt->setString(2, hostname);
             insertSystemInfoStmt->setString(3, cpuUsage);
             insertSystemInfoStmt->setString(4, ramUsage);
+             insertSystemInfoStmt->setString(5, hdd_utilization);
             insertSystemInfoStmt->execute();
              // Execute a query using a prepared statement
-            pstmt = con->prepareStatement("SELECT * FROM systems_info");
+            pstmt = con->prepareStatement("SELECT * FROM systems_information");
             res = pstmt->executeQuery();
 
             // Define the CSV file name
@@ -129,9 +131,9 @@ public:
 
             // Write data to a CSV file
             ofstream file(csv_file);
-            file << "client_id,system_info_id,hostname,cpuUsage,ramUsage,timestamp" << endl;
+            file << "client_id,system_info_id,hostname,cpuUsage,ramUsage,hdd_utilization,timestamp" << endl;
             while (res->next()) {
-           file << res->getString("client_id") << "," << res->getString("system_info_id")<< "," << res->getString("hostname") << "," << res->getString("cpuUsage")<< "," << res->getString("ramUsage")<< "," << res->getString("timestamp")<< endl; // Replace column1 and column2 with actual column names
+           file << res->getString("client_id") << "," << res->getString("system_info_id")<< "," << res->getString("hostname") << "," << res->getString("cpuUsage")<< "," << res->getString("ramUsage")<< "," << res->getString("hdd_utilization")<< "," << res->getString("timestamp")<< endl; // Replace column1 and column2 with actual column names
             }
            file.close();
             delete getClientIdStmt;
@@ -247,13 +249,13 @@ public:
                     string hostname = received_tree.get<string>("hostname");
                     string cpuUsage = received_tree.get<string>("cpu_usage");
                     string ramUsage = received_tree.get<string>("ram_usage");
-                    string modelName = received_tree.get<string>("model_name");
+                    string hdd_utilization = received_tree.get<string>("hdd_utilization");
 
                     cout << "\nReceived macaddress: " << macaddress << endl;
                     cout << "Received hostname: " << hostname << endl;
                     cout << "Received CPU Usage: " << cpuUsage << endl;
                     cout << "Received RAM Usage: " << ramUsage << endl;
-                    cout << "Received Model Name: " << modelName << endl;
+                    cout << "Received HDD Utilization Name: " << hdd_utilization << endl;
 
                     // Send a warning response to the client
                     if ( stoi(cpuUsage) > 90){
@@ -272,7 +274,7 @@ public:
 
                     try {
                         // Your existing code for storing data in the database
-                        db.StoreSystemInfo(macaddress, hostname, cpuUsage, ramUsage);
+                        db.StoreSystemInfo(macaddress, hostname, cpuUsage, ramUsage,hdd_utilization);
                     } catch (const std::exception& e) {
                         cerr << "Database Exception: " << e.what() << endl;
                         return;
