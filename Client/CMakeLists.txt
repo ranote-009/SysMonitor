@@ -11,6 +11,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} projectClient.cpp) 
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES}) 
 target_link_libraries(${PROJECT_NAME} pthread ssl crypto) 
+# Copy the JSON file to the build directory
+configure_file(server_info.json server_info.json COPYONLY)
 # add_executable(client projectClient.cpp)
 
 # # target_link_libraries(client

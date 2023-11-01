@@ -12,6 +12,7 @@
 #include <ctime>
 #include <thread>
 
+
 namespace asio = boost::asio;
 namespace beast = boost::beast;
 namespace ssl = asio::ssl; // SSL namespace
@@ -25,7 +26,7 @@ public:
     SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath,const std::string& connectionKey)
         : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath), ioc_(), ws_(ioc_, ctx),connectionKey_(connectionKey) {
         // Load root certificate (you should replace with your CA certificate)
-        //ctx_.set_default_verify_paths();
+       
         ctx.load_verify_file("server.crt");
 
         ctx.set_verify_mode(ssl::verify_peer); // Replace with your CA certificate path
@@ -157,63 +158,7 @@ private:
     }
 
     void receiveResponse() {
-        // try {
-        //     beast::error_code ec;
-        //     ws_.read(buffer_, ec);
-        //     if (ec) {
-        //         throw std::runtime_error("WebSocket read error");
-        //     }
-
-        //     std::string response= beast::buffers_to_string(buffer_.cdata());
-        //      logSuccess(response);
-            
-        //     std::cout << "Received response from the server: " << response << std::endl;
-        //       buffer_.consume(buffer_.size());
-        // } catch (const std::exception& e) {
-        //     std::cerr << "Receive Response Exception: " << e.what() << std::endl;
-        //     throw;
-        // }
-//         try {
-//     beast::error_code ec;
-//     beast::flat_buffer buffer;
-//     std::size_t bytes_transferred = 0;
- 
-//     // Set a timer for 5 seconds
-//     std::chrono::seconds timeout_duration(5);
-//     boost::asio::steady_timer timer(ioc_);
-//     timer.expires_after(timeout_duration);
- 
-//     // Set up asynchronous read operation
-//     ws_.async_read(buffer, [&ec, &bytes_transferred](beast::error_code read_ec, std::size_t bt) {
-//         ec = read_ec;
-//         bytes_transferred = bt;
-//     });
- 
-//     // Wait for the timer or the asynchronous read to complete
-//     ioc_.run_for(timeout_duration);
- 
-//     if (ec == boost::asio::error::operation_aborted) {
-//         throw std::runtime_error("WebSocket read operation timed out");
-//     } else if (ec) {
-//         throw std::runtime_error("WebSocket read error: " + ec.message());
-//     } else {
-//         std::string received_data = beast::buffers_to_string(buffer.data());
-//         std::cout << "Received response from the server: " << received_data << std::endl;
-       
-//         if (!received_data.empty()) {
-//             logSuccess("Data received successfully at, "); // Log success with timestamp
-//         } else {
-//             logSuccess("Data receiving failed at, "); // Log success with timestamp
-//         }
-//     }
-// } catch (const std::exception& e) {
-//     std::cerr << "Receive Response Exception: " << e.what() << std::endl;
-  
-//     logSuccess("Exception in receiveResponse: " + std::string(e.what())); // Log error with timestamp and exception details
-//     throw;
-// }
-     
-        boost::system::error_code read_error;
+         boost::system::error_code read_error;
          bool data_received = false;
         std::array<char, 128> response_data; 
         size_t response_length ;
@@ -274,7 +219,13 @@ private:
 };
 
 int main() {
-    SystemInfoClient client("127.0.0.1", 8080, "log.csv","CsGo@2023");
+     boost::property_tree::ptree pt;
+    boost::property_tree::read_json("server_info.json", pt);
+
+    // Extract IP address and port
+    std::string ipAddress = pt.get<std::string>("ip_address");
+    int port = pt.get<int>("port");
+    SystemInfoClient client(ipAddress, port, "log.csv","CsGo@2023");
     client.run();
 
     return 0;

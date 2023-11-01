@@ -2262,7 +2262,8 @@ CMakeFiles/client.dir/projectClient.cpp.o: ../projectClient.cpp \
   /usr/include/c++/11/iomanip \
   /usr/include/c++/11/bits/quoted_string.h \
   /usr/include/c++/11/thread \
-  /usr/include/c++/11/bits/this_thread_sleep.h
+  /usr/include/c++/11/bits/this_thread_sleep.h \
+  ../client.json
 
 
 /usr/include/c++/11/bits/this_thread_sleep.h:
@@ -6560,6 +6561,8 @@ CMakeFiles/client.dir/projectClient.cpp.o: ../projectClient.cpp \
 /usr/include/x86_64-linux-gnu/bits/uio_lim.h:
 
 /usr/include/boost/asio/io_service.hpp:
+
+../client.json:
 
 /usr/include/c++/11/tr1/beta_function.tcc:
 
