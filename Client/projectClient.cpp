@@ -18,11 +18,12 @@ namespace ssl = asio::ssl; // SSL namespace
 namespace http = beast::http;
 namespace websocket = beast::websocket;
 namespace pt = boost::property_tree;
+using namespace std;
 
 class SystemInfoClient {
 public:
-    SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath)
-        : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath), ioc_(), ws_(ioc_, ctx) {
+    SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath,const std::string& connectionKey)
+        : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath), ioc_(), ws_(ioc_, ctx),connectionKey_(connectionKey) {
         // Load root certificate (you should replace with your CA certificate)
         //ctx_.set_default_verify_paths();
         ctx.load_verify_file("server.crt");
@@ -33,6 +34,7 @@ public:
     void run() {
         try {
             connect();
+            sendKey();
             while (true) {
                 sendSystemInfo();
                 receiveResponse();
@@ -57,11 +59,23 @@ private:
     int serverPort_;
     std::string logFilePath_;
     int reconnectAttempts_ = 0;
+    std::string connectionKey_;
 
     asio::io_context ioc_;
     ssl::context ctx{ssl::context::tlsv12_client};
    websocket::stream<beast::ssl_stream<asio::ip::tcp::socket>> ws_;
     beast::flat_buffer buffer_;
+
+     void sendKey() {
+        boost::system::error_code write_error;
+        size_t bytes_written = ws_.write(asio::buffer(connectionKey_));
+
+        if (write_error) {
+            cerr << "Error sending connection key to the server: " << write_error.message() << endl;
+        } else {
+            cout << "Sent connection key to the server" << endl;
+        }
+    }
 
     std::string exec(const char* cmd) {
         char buffer[128];
@@ -233,7 +247,7 @@ private:
     }
 
     if (data_received) {
-        std::cout <<"Received \t"<<response_length<< "\tbytes of Data successfully." << std::endl;
+        std::cout <<"Received "<<response_length<< " bytes of Data successfully." << std::endl;
           logSuccess("Data successfully sent at, "); // Log success with timestamp
     }
     }
@@ -260,7 +274,7 @@ private:
 };
 
 int main() {
-    SystemInfoClient client("10.11.245.154", 8080, "log.csv");
+    SystemInfoClient client("127.0.0.1", 8080, "log.csv","CsGo@2023");
     client.run();
 
     return 0;

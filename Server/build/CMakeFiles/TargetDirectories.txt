@@ -1,3 +1,0 @@
-/home/mohit/Desktop/project/SysMonitor/Server/build/CMakeFiles/server.dir
-/home/mohit/Desktop/project/SysMonitor/Server/build/CMakeFiles/edit_cache.dir
-/home/mohit/Desktop/project/SysMonitor/Server/build/CMakeFiles/rebuild_cache.dir

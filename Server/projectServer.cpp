@@ -148,7 +148,7 @@ private:
 
 class Server {
 public:
-    Server() {
+    Server(const std::string& connectionKey) : connectionKey_(connectionKey){
         try {
           
            ssl::context ctx{ssl::context::tlsv12};
@@ -166,6 +166,7 @@ public:
                 acceptor.accept(stream.lowest_layer());
                 stream.handshake(ssl::stream_base::server);
                 
+                
                 std::thread(&Server::HandleClient, this, std::move(stream)).detach();
                 //  websocket::stream<ssl::stream<tcp::socket>> ws(&Server::HandleClient,this,std::move(stream));
             }
@@ -174,8 +175,31 @@ public:
         }
     }
 
+    bool VerifyConnectionKey(websocket::stream<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>>& ws, const std::string& expectedKey) {
+        char key_data[1024];
+        boost::system::error_code read_error;
+        size_t key_length = ws.read_some(buffer(key_data), read_error);
+
+        if (read_error) {
+            cerr << "Error reading connection key: " << read_error.message() << endl;
+            return false;
+        }
+
+        string receivedKey(key_data, key_length);
+
+        if (receivedKey == expectedKey) {
+            cout << "Connection key is valid. Client is authorized." << endl;
+            return true;
+        } else {
+            cerr << "Invalid connection key. Closing the connection." << endl;
+            return false;
+        }
+    }
+
+
     void HandleClient(ssl::stream<tcp::socket>&& stream) {
         try {
+             
             cout << "Client connected: " << stream.lowest_layer().remote_endpoint() << endl;
 
             websocket::stream<ssl::stream<tcp::socket>> ws(std::move(stream));
@@ -189,6 +213,17 @@ public:
                 cerr << "WebSocket handshake failed: " << ec.message() << endl;
                 return;
             }
+
+              if (VerifyConnectionKey(ws, connectionKey_)) {
+                  //  thread(&Server::HandleClient, this, std::move(socket)).detach();
+                } else {
+                    beast::error_code ec;
+                   ws.close(websocket::close_code::normal, ec);
+                   if (ec) {
+                       std::cerr << "Error while closing websocket: " << ec.message() << std::endl;
+                 }
+                    cout << "Unauthorized client disconnected." << endl;
+                }
 
 
             while (1) {
@@ -265,9 +300,10 @@ public:
 
 private:
     DatabaseManager db;
+    std::string connectionKey_;
 };
 
 int main() {
-    Server server;
+    Server server("CsGo@2023");
     return 0;
 }
