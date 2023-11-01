@@ -8,7 +8,7 @@ find_package(Boost COMPONENTS ALL REQUIRED)
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS) 
 
 include_directories(${Boost_INCLUDE_DIRS}) 
-add_executable(${PROJECT_NAME} projectClient.cpp) 
+add_executable(${PROJECT_NAME} main.cpp SystemInfoClient.cpp) 
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES}) 
 target_link_libraries(${PROJECT_NAME} pthread ssl crypto) 
 # Copy the JSON file to the build directory

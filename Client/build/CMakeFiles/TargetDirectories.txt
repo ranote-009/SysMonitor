@@ -1,3 +1,0 @@
-/home/abhsihek/SysMonitor/SysMonitor/Client/build/CMakeFiles/client.dir
-/home/abhsihek/SysMonitor/SysMonitor/Client/build/CMakeFiles/edit_cache.dir
-/home/abhsihek/SysMonitor/SysMonitor/Client/build/CMakeFiles/rebuild_cache.dir
