@@ -11,7 +11,7 @@ from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 from langchain.llms import OpenAI
 from langchain.vectorstores import Chroma
 
-import constants
+import GenAI.constants as constants
 
 os.environ["OPENAI_API_KEY"] = constants.APIKEY
 
