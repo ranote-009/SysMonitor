@@ -16,7 +16,7 @@ using namespace std;
 SystemInfoClient::SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath, const std::string& connectionKey)
     : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath), reconnectAttempts_(0), connectionKey_(connectionKey), ioc_(), ws_(ioc_, ctx)
 {
-    ctx.load_verify_file("server.crt");
+    ctx.load_verify_file("../../Certificate/server.crt");
     ctx.set_verify_mode(ssl::verify_peer);
 }
 
@@ -57,7 +57,7 @@ void SystemInfoClient::run()
         if (write_error) {
             cerr << "Error sending connection key to the server: " << write_error.message() << endl;
         } else {
-            cout << "Sent connection key to the server" << endl;
+            cout << "Sent connection key to the server \n" << endl;
         }
     }
 
@@ -175,7 +175,7 @@ void SystemInfoClient::run()
     }
 
     if (data_received) {
-        std::cout <<"Received "<<response_length<< " bytes of Data successfully." << std::endl;
+        std::cout <<"Received "<<response_length<< " bytes of Data successfully.\n\n" << std::endl;
           logSuccess("Data successfully sent at, "); // Log success with timestamp
     }
     }

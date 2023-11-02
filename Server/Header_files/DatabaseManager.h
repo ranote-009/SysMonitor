@@ -8,8 +8,8 @@
 
 using namespace std;
 using namespace sql;
-sql::PreparedStatement *pstmt;
-sql::ResultSet *res;
+
+
 
 class DatabaseManager {
 public:

@@ -3,6 +3,7 @@ set(CMAKE_CXX_STANDARD 17)
 project(server) 
 
 find_package(Boost COMPONENTS ALL REQUIRED) 
+include_directories(Header_files)
 
 #This line because you are using some depericated Boost APIs 
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS) 

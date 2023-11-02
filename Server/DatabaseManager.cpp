@@ -1,4 +1,7 @@
-#include "DatabaseManager.h"
+#include "./Header_files/DatabaseManager.h"
+
+sql::PreparedStatement *pstmt;
+sql::ResultSet *res;
 
 DatabaseManager:: DatabaseManager() {
         try {
