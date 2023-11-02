@@ -106,6 +106,13 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
                     cout << "Received RAM Usage: " << ramUsage << endl;
                     cout << "Received HDD Utilization Name: " << hdd_utilization << endl;
 
+
+                // Warning analysis       
+                     hdd_utilization.pop_back();
+                   // Converting the string to an integer
+                     int inthdd = std::stoi(hdd_utilization);
+                   int ramUsagePercentage = (stoi(ramUsage)*100) / stoi(ramUsage.substr(15,4));
+
                     // Send a warning response to the client
                     if ( stoi(cpuUsage) > 90){
 
@@ -116,10 +123,37 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
                             cerr << "Unable to send warning\n" << "WebSocket write error: " << write_ec.message() << endl;
                             return;
                         } else {
-                            cout << "Sent warning  response to the client" << "(" << macaddress << ")" << endl;
+                            cout << "Sent CPU warning  response to the client" << "(" << macaddress << ")" << endl;
                         }
 
                     }
+                     if ( ramUsagePercentage>90){
+
+                        string warningResponse = "RAM USAGE IS MORE THAN 90% !!!";
+                        beast::error_code write_ec;
+                        ws.write(boost::asio::buffer(warningResponse), write_ec);
+                        if (write_ec) {
+                            cerr << "Unable to send warning\n" << "WebSocket write error: " << write_ec.message() << endl;
+                            return;
+                        } else {
+                            cout << "Sent RAM warning  response to the client" << "(" << macaddress << ")" << endl;
+                        }
+
+                    }
+                     if ( inthdd>90){
+
+                        string warningResponse = "HDD USAGE IS MORE THAN 90% !!!";
+                        beast::error_code write_ec;
+                        ws.write(boost::asio::buffer(warningResponse), write_ec);
+                        if (write_ec) {
+                            cerr << "Unable to send warning\n" << "WebSocket write error: " << write_ec.message() << endl;
+                            return;
+                        } else {
+                            cout << "Sent  HDD warning  response to the client" << "(" << macaddress << ")" << endl;
+                        }
+
+                    }
+
 
                     try {
                         // Your existing code for storing data in the database
@@ -129,7 +163,8 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
                         return;
                     }
 
-                    // Send a success response back to the client
+                    if(!(stoi(cpuUsage) > 90||ramUsagePercentage>90 || inthdd>90)) {
+                          // Send a success response back to the client
                     string successResponse = "Data transfer was successful!";
                     beast::error_code write_ec;
                     ws.write(boost::asio::buffer(successResponse), write_ec);
@@ -139,6 +174,10 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
                     } else {
                         cout << "Sent success response to the client" << endl;
                     }
+
+                    }
+                  
+                   
                 } catch (const std::exception& e) {
                     cerr << "JSON Parsing Exception: " << e.what() << endl;
                     return;

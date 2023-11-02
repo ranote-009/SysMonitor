@@ -141,6 +141,7 @@ void SystemInfoClient::run()
     }
 
  void SystemInfoClient::receiveResponse() {
+    string received_data;
          boost::system::error_code read_error;
          bool data_received = false;
         std::array<char, 128> response_data; 
@@ -148,9 +149,13 @@ void SystemInfoClient::run()
        // size_t response_length = socket.read_some(buffer(response_data), read_error);
 
  std::future<size_t> result = std::async(std::launch::async, [&](){
-        boost::system::error_code read_error;
+      //  boost::system::error_code read_error;
+         beast::flat_buffer buffer;
+         beast::error_code read_ec;
+         response_length = ws_.read(buffer, read_ec);
        // Adjust the buffer size as needed
-      response_length = ws_.read_some(boost::asio::buffer(response_data), read_error);
+     // response_length = ws_.read_some(boost::asio::buffer(response_data), read_error);
+        received_data=beast::buffers_to_string(buffer.data());
         if(!read_error) {
             return response_length;
         } else {
@@ -175,8 +180,9 @@ void SystemInfoClient::run()
     }
 
     if (data_received) {
-        std::cout <<"Received "<<response_length<< " bytes of Data successfully.\n\n" << std::endl;
-          logSuccess("Data successfully sent at, "); // Log success with timestamp
+        std::cout <<"Received "<<response_length<< " bytes of Data successfully." << std::endl;
+        std::cout <<received_data <<"\n\n"<<std::endl;
+          logSuccess(received_data); // Log success with timestamp
     }
     }
     
