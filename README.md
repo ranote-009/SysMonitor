@@ -132,8 +132,6 @@ Contributions to this project are welcome. If you would like to contribute to th
 ## Contact
 
 For more information about the project or if you have any questions, feel free to contact the author.
-```
 
-You can copy and paste this into your GitHub README editor. Make sure to replace the placeholders like `ServerIPAddress`, `YourConnectionKeyHere`, and other values with your actual configuration.
 
    
