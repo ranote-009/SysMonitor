@@ -2,6 +2,38 @@
 
 This project is a system for exchanging system information between a server and client over a WebSocket connection. The server is responsible for receiving and processing system information from clients, while clients periodically send system data to the server. The server can also send warning messages to clients when certain conditions are met.
 
+## Project Structure
+
+The project is organized into separate directories for the server and client components, each with its own set of files. Here's an overview of the project structure:
+
+### Certificate Directory
+
+The `certificate` directory contains the SSL certificate and private key used for secure communication between the server and clients. The files in this directory include:
+
+- `server.crt`: The SSL certificate for the server.
+- `server.key`: The private key for the server's SSL certificate.
+
+### Client Directory
+
+The `Client` directory contains the client-side code and build configuration:
+
+- `CMakeLists.txt`: The CMake configuration file for building the client.
+- `SystemInfoClient.cpp`: The C++ source code for the client application.
+- `SystemInfoClient.h`: The header file for the client application.
+- `main.cpp`: The main entry point for the client application.
+- `server_info.json`: A configuration file that specifies the server's IP address and port. Update this file with your server's details.
+
+### Server Directory
+
+The `Server` directory contains the server-side code and build configuration:
+
+- `Header_files`: A directory containing header files used by the server code.
+- `CMakeLists.txt`: The CMake configuration file for building the server.
+- `DatabaseManager.cpp`: The C++ source code for managing the database.
+- `Server.cpp`: The C++ source code for the server application.
+- `exported_data.csv`: A CSV file where server data is exported.
+- `main.cpp`: The main entry point for the server application.
+
 ## Server (C++)
 
 The server application is implemented in C++ and uses the CMake build system along with various libraries, including Boost, MySQL, OpenSSL, and others. It serves as a WebSocket server that listens on a specified port and processes incoming connections.
@@ -22,11 +54,11 @@ To set up the server:
 
 1. Ensure that you have the necessary prerequisites installed on your server machine.
 
-2. Modify the SSL certificate and private key paths in the `Server` class constructor to match your server's SSL certificate configuration. This enables secure communication with clients over SSL/TLS.
+2. Modify the SSL certificate and private key paths in the `Server` class constructor to match the locations of `server.crt` and `server.key` from the `certificate` directory. This enables secure communication with clients over SSL/TLS.
 
 3. Create a MySQL database named `sys_info` on your MySQL server. You can change the schema name by modifying the `con->setSchema("sys_info")` line in the `DatabaseManager` class constructor.
 
-4. Build the server using CMake. You can do this with the following commands:
+4. Build the server using CMake. You can do this with the following commands in the `Server` directory:
 
    ```bash
    mkdir build
@@ -74,15 +106,15 @@ Before setting up and running the client, make sure you have the following prere
 
 To set up the client:
 
-1. Modify the SSL certificate path in the `SystemInfoClient` class constructor to match your server's SSL certificate.
+1. Modify the SSL certificate path in the `SystemInfoClient` class constructor to match the location of `server.crt` from the `certificate` directory.
 
-2. Specify the server's IP address, port, log file path, and connection key in the `main` function.
+2. Specify the server's IP address, port, log file path, and connection key in the `server_info.json` file(recommended) or in `main` function in the `main.cpp` file within the `Client` directory:
 
    ```cpp
    SystemInfoClient client("ServerIPAddress", ServerPort, "log.csv", "YourConnectionKeyHere");
    ```
 
-3. Build the client using CMake. You can do this with the following commands:
+3. Build the client using CMake. You can do this with the following commands in the `Client` directory:
 
    ```bash
    mkdir build
@@ -111,7 +143,7 @@ The client has the following behavior:
 
 ## Configuration Files
 
-The project includes a `server_info.json` configuration file that you should copy to the build directory when running the client. This file specifies the server's IP address and port. You can modify these values to match your server configuration.
+The project includes a `server_info.json` configuration file in the `Client` directory. You should copy this file to the build directory when running the client. This file specifies the server's IP address and port. Update these values to match your server configuration.
 
 ## Contributing
 
@@ -132,6 +164,3 @@ Contributions to this project are welcome. If you would like to contribute to th
 ## Contact
 
 For more information about the project or if you have any questions, feel free to contact the author.
-
-
-   
