@@ -16,7 +16,7 @@ using namespace std;
 SystemInfoClient::SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath, const std::string& connectionKey)
     : serverAddress_(serverAddress), serverPort_(serverPort), logFilePath_(logFilePath), reconnectAttempts_(0), connectionKey_(connectionKey), ioc_(), ws_(ioc_, ctx)
 {
-    ctx.load_verify_file("../../Certificate/server.crt");
+    ctx.load_verify_file("/home/abhsihek/SysMonitor/SysMonitor/Certificate/server.crt");
     ctx.set_verify_mode(ssl::verify_peer);
 }
 
@@ -199,7 +199,7 @@ void SystemInfoClient::run()
     char timestamp[20];
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeInfo);
 
-    logFile << result << timestamp << std::endl; // Separate values with commas
+    logFile << result <<"," <<timestamp << std::endl; // Separate values with commas
     logFile.close();
 } else {
     std::cerr << "Error opening log file for writing." << std::endl;

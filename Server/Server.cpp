@@ -1,31 +1,30 @@
 #include "./Header_files/Server.h"
 
-Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey){
-        try {
-          
-           ssl::context ctx{ssl::context::tlsv12};
+Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey) {
+    try {
+        ssl::context ctx{ssl::context::tlsv12};
 
-            // Load your SSL certificate and private key
-            ctx.use_certificate_file("../../Certificate/server.crt", ssl::context::file_format::pem);
-            ctx.use_private_key_file("../../Certificate/server.key", ssl::context::file_format::pem);
- 
-            net::io_context ioc(1);
-            tcp::acceptor acceptor(ioc, {{}, 8080});
-             ssl::stream<tcp::socket> stream(ioc, ctx);
-            cout << "Server started and waiting for connections..." << endl;
+        // Load your SSL certificate and private key
+        ctx.use_certificate_file("../../Certificate/server.crt", ssl::context::file_format::pem);
+        ctx.use_private_key_file("../../Certificate/server.key", ssl::context::file_format::pem);
 
-            while (1) {
-                acceptor.accept(stream.lowest_layer());
-                stream.handshake(ssl::stream_base::server);
-                
-                
-                std::thread(&Server::HandleClient, this, std::move(stream)).detach();
-                //  websocket::stream<ssl::stream<tcp::socket>> ws(&Server::HandleClient,this,std::move(stream));
-            }
-        } catch (const exception& e) {
-            cerr << "Server Exception: " << e.what() << endl;
+        net::io_context ioc(1);
+        tcp::acceptor acceptor(ioc, {{}, 8080});
+
+        cout << "Server started and waiting for connections..." << endl;
+
+        while (1) {
+            ssl::stream<tcp::socket> stream(ioc, ctx);
+            acceptor.accept(stream.lowest_layer());
+            stream.handshake(ssl::stream_base::server);
+
+            std::thread(&Server::HandleClient, this, std::move(stream)).detach();
         }
+    } catch (const std::exception& e) {
+        cerr << "Server Exception: " << e.what() << endl;
     }
+}
+
     bool Server::VerifyConnectionKey(websocket::stream<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>>& ws, const std::string& expectedKey) {
         char key_data[1024];
         boost::system::error_code read_error;
@@ -51,7 +50,7 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
     void Server::HandleClient(ssl::stream<tcp::socket>&& stream) {
         try {
              
-            cout << "Client connected: " << stream.lowest_layer().remote_endpoint() << endl;
+            cout << "\n \n \nClient connected: " << stream.lowest_layer().remote_endpoint() << endl;
 
             websocket::stream<ssl::stream<tcp::socket>> ws(std::move(stream));
              ws.accept();

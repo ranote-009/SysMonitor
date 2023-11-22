@@ -5,7 +5,7 @@
 
 int main() {
     boost::property_tree::ptree pt;
-    boost::property_tree::read_json("server_info.json", pt);
+    boost::property_tree::read_json("/home/abhsihek/SysMonitor/SysMonitor/Client/server_info.json", pt);
 
     // Extract IP address and port
     std::string ipAddress = pt.get<std::string>("ip_address");

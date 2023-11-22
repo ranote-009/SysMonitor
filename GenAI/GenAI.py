@@ -11,7 +11,7 @@ from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 from langchain.llms import OpenAI
 from langchain.vectorstores import Chroma
 
-import GenAI.constants as constants
+import  constants
 
 os.environ["OPENAI_API_KEY"] = constants.APIKEY
 
@@ -27,7 +27,7 @@ if PERSIST and os.path.exists("persist"):
   vectorstore = Chroma(persist_directory="persist", embedding_function=OpenAIEmbeddings())
   index = VectorStoreIndexWrapper(vectorstore=vectorstore)
 else:
-  loader = TextLoader("Server/buils/exported_data.csv") # Use this line if you only need data.txt
+  loader = TextLoader("../Server/build/exported_data.csv") # Use this line if you only need data.txt
   #loader = DirectoryLoader("Server/")
   if PERSIST:
     index = VectorstoreIndexCreator(vectorstore_kwargs={"persist_directory":"persist"}).from_loaders([loader])
