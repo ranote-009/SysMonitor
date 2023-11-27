@@ -27,7 +27,7 @@ if PERSIST and os.path.exists("persist"):
   vectorstore = Chroma(persist_directory="persist", embedding_function=OpenAIEmbeddings())
   index = VectorStoreIndexWrapper(vectorstore=vectorstore)
 else:
-  loader = TextLoader("../Server/build/exported_data.csv") # Use this line if you only need data.txt
+  loader = TextLoader("/home/abhsihek/SysMonitor/SysMonitor/Server/build/exported_data.csv") # Use this line if you only need data.txt
   #loader = DirectoryLoader("Server/")
   if PERSIST:
     index = VectorstoreIndexCreator(vectorstore_kwargs={"persist_directory":"persist"}).from_loaders([loader])

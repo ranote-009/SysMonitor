@@ -38,7 +38,7 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
         string receivedKey(key_data, key_length);
 
         if (receivedKey == expectedKey) {
-            cout << "Connection key is valid. Client is authorized." << endl;
+            cout << " \n \nConnection key is valid. Client is authorized.\n" << endl;
             return true;
         } else {
             cerr << "Invalid connection key. Closing the connection." << endl;
@@ -86,7 +86,7 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
                 }
 
                 string received_data(beast::buffers_to_string(buffer.data()));
-                cout << "Received " << buffer.size() << " bytes of data from the client" << endl;
+                cout << "\nReceived " << buffer.size() << " bytes of data from the client" << endl;
 
                 try {
                     pt::ptree received_tree;
@@ -113,7 +113,7 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
                    int ramUsagePercentage = (stoi(ramUsage)*100) / stoi(ramUsage.substr(15,4));
 
                     // Send a warning response to the client
-                    if ( stoi(cpuUsage) > 90){
+                    if ( stoi(cpuUsage) > 5){
 
                         string warningResponse = "CPU USAGE IS MORE THAN 90% !!!";
                         beast::error_code write_ec;
