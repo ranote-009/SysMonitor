@@ -102,7 +102,7 @@ DatabaseManager:: DatabaseManager() {
             res = pstmt->executeQuery();
 
             // Define the CSV file name
-            const char* csv_file = "exported_data.csv";
+            const char* csv_file = "/home/abhsihek/SysMonitor/SysMonitor/Server/build/exported_data.csv";
 
             // Write data to a CSV file
             ofstream file(csv_file);

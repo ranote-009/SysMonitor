@@ -5,8 +5,8 @@ Server::Server(const std::string& connectionKey) : connectionKey_(connectionKey)
         ssl::context ctx{ssl::context::tlsv12};
 
         // Load your SSL certificate and private key
-        ctx.use_certificate_file("../../Certificate/server.crt", ssl::context::file_format::pem);
-        ctx.use_private_key_file("../../Certificate/server.key", ssl::context::file_format::pem);
+        ctx.use_certificate_file("/home/abhsihek/SysMonitor/SysMonitor/Certificate/server.crt", ssl::context::file_format::pem);
+        ctx.use_private_key_file("/home/abhsihek/SysMonitor/SysMonitor/Certificate/server.key", ssl::context::file_format::pem);
 
         net::io_context ioc(1);
         tcp::acceptor acceptor(ioc, {{}, 8080});
