@@ -1,0 +1,22 @@
+{
+  "name": "sysui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "backend.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0"
+  }
+}

@@ -1,5 +1,7 @@
 vscode/
 build/
+SysUI/sysBackend/node_modules
+SysUI/sysui-app/node_modules
 *.o
 *.so
 *.a
