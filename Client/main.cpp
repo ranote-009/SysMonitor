@@ -10,7 +10,7 @@ int main() {
     // Extract IP address and port
     std::string ipAddress = pt.get<std::string>("ip_address");
     int port = pt.get<int>("port");
-    SystemInfoClient client(ipAddress, port, "log.csv","CsGo@2023");
+    SystemInfoClient client(ipAddress, port, "/home/abhsihek/SysMonitor/SysMonitor/Client/build/log.csv","CsGo@2023");
     client.run();
 
     return 0;

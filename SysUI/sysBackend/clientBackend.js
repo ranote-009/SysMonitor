@@ -22,8 +22,21 @@ app.get('/run-cpp', (req, res) => {
   res.setHeader('Connection', 'keep-alive');
 
   // Send output to the client
+  let accumulatedData = '';
+
+  // Send output to the client
   childProcess.stdout.on('data', (data) => {
-    res.write(`data: ${data}\n\n`);
+    accumulatedData += data.toString();
+    
+    // Check for newline character to send a chunk
+    if (accumulatedData.includes('\n')) {
+      const chunks = accumulatedData.split('\n');
+      accumulatedData = chunks.pop(); // Save incomplete line for the next iteration
+
+      chunks.forEach(chunk => {
+        res.write(`data: ${chunk}\n\n`);
+      });
+    }
   });
 
   // Send errors to the client
