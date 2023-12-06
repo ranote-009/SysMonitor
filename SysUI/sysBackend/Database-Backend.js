@@ -1,10 +1,10 @@
-// Example backend route to get data from MySQL
+// backend-mysql.js
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
 
 const app = express();
-app.use(cors()); 
+app.use(cors());
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -18,11 +18,8 @@ app.get('/api/data', (req, res) => {
   const query = 'SELECT * FROM systems_information';
   connection.query(query, (err, results) => {
     if (err) throw err;
-   // console.log(results);
     res.json(results);
-    
   });
 });
 
-const port = 5000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+module.exports = app; // Export the Express app as middleware

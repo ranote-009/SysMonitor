@@ -8,7 +8,6 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 const port = 7000;
-
 app.use(bodyParser.json());
 
 const transporter = nodemailer.createTransport({

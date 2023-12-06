@@ -7,7 +7,7 @@ const App = () => {
 
   const runCpp = async () => {
     try {
-    const eventSource = new EventSource('http://localhost:9000/run-cpp');
+    const eventSource = new EventSource('http://localhost:8000/run-cpp-server');
 
     eventSource.onmessage = (event) => {
         const receivedData = event.data;

@@ -41,7 +41,7 @@ const handleWordDetection = (inputString) => {
 
   const runCpp = async () => {
     try {
-    const eventSource = new EventSource('http://localhost:8000/run-cpp');
+    const eventSource = new EventSource('http://localhost:8000/run-cpp-client');
 
     eventSource.onmessage = (event) => {
       setOutput((prevOutput) => prevOutput + event.data);
