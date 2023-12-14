@@ -18,6 +18,7 @@ app.get('/run-cpp-server', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
+
   let accumulatedData = '';
 
   childProcess.stdout.on('data', (data) => {
@@ -42,6 +43,31 @@ app.get('/run-cpp-server', (req, res) => {
     res.end();
   });
 });
+
+app.post('/stop-cpp-server', (req, res) => {
+  const stopCommand = 'for pid in $(pgrep -f "./server"); do     kill -9 "$pid"; done';
+  const childProcess = spawn(stopCommand, { shell: true });
+
+  childProcess.stderr.on('data', (data) => {
+    console.error('Error executing stop command:', data.toString());
+    res.write(`error: ${data}\n\n`);
+  });
+
+  childProcess.on('error', (err) => {
+    console.error('Error executing stop command:', err);
+    res.status(500).json({ success: false, error: err.message });
+  });
+
+  childProcess.on('close', (code) => {
+    if (code === 0) {
+      res.json({ success: true, code });
+    } else {
+      res.status(500).json({ success: false, code });
+    }
+  });
+});
+
+
 
 module.exports = app; // Export the Express app as middleware
 

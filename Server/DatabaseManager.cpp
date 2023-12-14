@@ -7,7 +7,7 @@ DatabaseManager:: DatabaseManager() {
         try {
             driver = sql::mysql::get_mysql_driver_instance();
             con = driver->connect("tcp://localhost:3306", "root", "");
-            con->setSchema("sys_info");
+            con->setSchema("system_info");
             CreateTables(con);
         } catch (const std::exception& e) {
             std::cerr << "DatabaseManager Exception: " << e.what() << std::endl;

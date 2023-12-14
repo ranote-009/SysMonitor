@@ -43,4 +43,15 @@ app.get('/run-cpp-client', (req, res) => {
   });
 });
 
+app.post('/stop-cpp-client', (req, res) => {
+  // Implement the logic to stop the server using your terminal command
+  const stopCommand = 'for pid in $(pgrep -f "/home/abhsihek/SysMonitor/SysMonitor/Client/build/client"); do kill -2 "$pid"; done';
+
+  const childProcess = spawn(stopCommand, { shell: true });
+
+  childProcess.on('close', (code) => {
+    res.json({ success: true, code });
+  });
+});
+
 module.exports = app; // Export the Express app as middleware

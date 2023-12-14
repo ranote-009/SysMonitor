@@ -1,12 +1,12 @@
 // SystemInfoClient.hpp
 #ifndef SYSTEM_INFO_CLIENT_H
 #define SYSTEM_INFO_CLIENT_H
-
+ 
 #include <iostream>
 #include <fstream>
 #include <boost/asio.hpp>
 #include <boost/beast/core.hpp>
-#include <boost/beast/ssl.hpp> 
+#include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -15,8 +15,8 @@
 #include <cstdio>
 #include <ctime>
 #include <thread>
-
-
+#include <csignal>
+ 
 namespace asio = boost::asio;
 namespace beast = boost::beast;
 namespace ssl = asio::ssl; // SSL namespace
@@ -24,13 +24,15 @@ namespace http = beast::http;
 namespace websocket = beast::websocket;
 namespace pt = boost::property_tree;
 using namespace std;
-
+ 
 class SystemInfoClient {
 public:
     SystemInfoClient(const std::string& serverAddress, int serverPort, const std::string& logFilePath, const std::string& connectionKey);
+    static void signalHandler(int signal);
     void run();
-
+ 
 private:
+    static SystemInfoClient* instance;
     std::string serverAddress_;
     int serverPort_;
     std::string logFilePath_;
@@ -40,7 +42,8 @@ private:
     ssl::context ctx{ssl::context::tlsv12_client};
    websocket::stream<beast::ssl_stream<asio::ip::tcp::socket>> ws_;
     beast::flat_buffer buffer_;
-
+    bool shouldRun_;
+ 
     // Add private methods for sending, receiving data, and logging
     void sendKey();
     std::string exec(const char* cmd);
@@ -48,6 +51,8 @@ private:
     void sendSystemInfo();
     void receiveResponse();
     void logSuccess(std::string result);
+    void sendDisconnectMessage();
 };
-
+ 
 #endif // SYSTEM_INFO_CLIENT_HPP
+ 
